@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id(); // Laravel sẽ tạo cột id (bigIncrements)
             $table->string('ten_danh_muc');
             $table->string('mo_ta')->nullable();
+            $table->string('hinh_anh')->nullable();
             $table->unsignedBigInteger('danh_muc_id')->nullable(); // Khóa ngoại tham chiếu chính bảng này
             $table->tinyInteger('trang_thai')->default(1);
             $table->timestamps();

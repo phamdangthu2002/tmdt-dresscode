@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Layout</title>
     <link href="{{ asset('assets/vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/boxicons-2.1.4/css/boxicons.min.css') }}">
     <script src="{{ asset('assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
     <style>
         /* Định dạng tổng thể */
@@ -18,17 +18,59 @@
             background-color: #f8f9fa;
         }
 
+        /* Header */
+        .header {
+            display: none;
+            align-items: center;
+            width: 100%;
+            padding: 15px;
+            background-color: #2b2b2b;
+            color: white;
+        }
+
+        .header .toggle-btn {
+            background: #2b2b2b;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .header .search-container {
+            position: relative;
+            flex: 1;
+        }
+
+        .header .search {
+            width: 100%;
+            padding: 5px 10px 5px 35px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .header .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            color: #aaa;
+            font-size: 1.2em;
+        }
+
         /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: #2b2b2b;
             color: white;
-            padding: 15px;
+            padding-top: 55px;
             transition: all 0.3s ease-in-out;
             position: fixed;
             left: 0;
             top: 0;
             bottom: 0;
+            z-index: 1000;
+            overflow-y: auto;
         }
 
         .sidebar.collapsed {
@@ -51,13 +93,13 @@
             align-items: center;
             color: white;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 10px 20px;
             transition: all 0.3s;
         }
 
         .sidebar a:hover {
             background-color: #495057;
-            padding-left: 20px;
+            padding-left: 23px;
         }
 
         .sidebar i {
@@ -70,21 +112,6 @@
             text-align: center;
         }
 
-        /* Nút toggle */
-        .toggle-btn {
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            background: #2b2b2b;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            cursor: pointer;
-            font-size: 1.5em;
-            z-index: 1001;
-            transition: all 0.3s;
-        }
-
         /* Nội dung chính */
         .content {
             flex: 1;
@@ -94,7 +121,7 @@
             width: 100%;
         }
 
-        .sidebar.collapsed ~ .content {
+        .sidebar.collapsed~.content {
             margin-left: 60px;
         }
 
@@ -102,6 +129,10 @@
         @media (max-width: 767px) {
             body {
                 flex-direction: column;
+            }
+
+            .header {
+                display: flex;
             }
 
             .sidebar {
@@ -117,11 +148,31 @@
                 margin-left: 0;
             }
         }
+
+        @media (min-width: 768px) {
+            .header {
+                display: none;
+            }
+
+            .toggle-btn {
+                display: inline-block;
+            }
+
+            .search-container {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <button class="toggle-btn" onclick="toggleSidebar()"><i class="bx bx-menu"></i></button>
+    <div class="header">
+        <button class="toggle-btn" onclick="toggleSidebar()"><i class="bx bx-menu"></i></button>
+        <div class="search-container">
+            <i class="bx bx-search search-icon"></i>
+            <input type="search" placeholder="Search..." class="search" />
+        </div>
+    </div>
 
     <div class="sidebar" id="sidebar">
         <h2>Admin Panel</h2>
@@ -132,8 +183,6 @@
     </div>
 
     <div class="content">
-        <h1>Welcome to Admin Dashboard</h1>
-        <p>This is the content area.</p>
         @yield('content')
     </div>
 
