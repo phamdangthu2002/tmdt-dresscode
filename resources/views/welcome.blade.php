@@ -16,7 +16,7 @@
     <p class="lead text-muted mb-4">
         Khám phá phong cách của bạn với những bộ trang phục thời thượng nhất!
     </p>
-    <a href="" class="btn btn-dark btn-lg shadow">
+    <a href="/home" class="btn btn-dark btn-lg shadow">
         Khám phá ngay
     </a>
 </body>

@@ -5,6 +5,7 @@ use App\Http\Controllers\admin\danhmuc\DanhmucController;
 use App\Http\Controllers\admin\sanpham\SanphamController;
 use App\Http\Controllers\admin\user\UserController;
 use App\Http\Controllers\auth\AuthController;
+use App\Http\Controllers\user\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,3 +39,5 @@ Route::prefix('admin')->group(function () {
         Route::get('/index/user', [UserController::class, 'index'])->name('admin.user.index');
     });
 });
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');

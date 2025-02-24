@@ -1,18 +1,10 @@
 @extends('admin.layout')
 @section('content')
     <title>Quản lý danh mục</title>
-    <link href="{{ asset('assets/vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <script src="{{ asset('assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <style>
         .category-image {
-            width: 100px;
-            height: 100px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
         }
 
@@ -49,18 +41,49 @@
                         <h2>Thêm danh mục</h2>
                     </div>
                     <div class="card-body">
-                        <form action="" method="POST" enctype="multipart/form-data">
+                        <form method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label for="name" class="form-label">Tên danh mục</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="ten_danh_muc" class="form-label">Tên danh mục</label>
+                                <input type="text" class="form-control" id="ten_danh_muc" name="ten_danh_muc"
+                                    ng-model="danhmuc.ten_danh_muc">
                             </div>
                             <div class="mb-3">
-                                <label for="image" class="form-label">Hình ảnh</label>
-                                <input type="file" class="form-control" id="image" name="image" required>
+                                <label for="mo_ta" class="form-label">Mô tả</label>
+                                <input type="text" class="form-control" id="mo_ta" name="mo_ta"
+                                    ng-model="danhmuc.mo_ta">
                             </div>
-                            <button type="submit" class="btn btn-primary">Thêm danh mục</button>
+                            <div class="mb-3">
+                                <label for="danh_muc_id" class="form-label">Danh mục cha</label>
+                                <select name="danh_muc_id" id="danh_muc_id" class="form-control"
+                                    ng-model="danhmuc.danh_muc_id">
+                                    <option value="">-- Chọn danh mục cha --</option>
+                                    <option value="1">Danh mục 1</option>
+                                    <option value="2">Danh mục 2</option>
+                                    <option value="3">Danh mục 3</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="trang_thai" class="form-label">Trạng thái</label>
+                                <select name="trang_thai" id="trang_thai" class="form-control"
+                                    ng-model="danhmuc.trang_thai">
+                                    <option value="">-- Chọn trạng thái --</option>
+                                    <option value="1">Hiển thị</option>
+                                    <option value="0">Ẩn</option>
+                                </select>
+                            </div>
+                            <input type="file" class="form-control" id="image" accept="image/*"
+                                onchange="angular.element(this).scope().previewImage(event)">
+
+                            <!-- Hiển thị ảnh xem trước -->
+                            <img ng-show="danhmuc.hinh_anh_preview" ng-src="@{{ danhmuc.hinh_anh_preview }}" alt="Xem trước hình ảnh"
+                                style="max-width: 200px; margin-top: 10px;">
+
+                            <!-- Hiển thị tên file -->
+                            <p ng-show="danhmuc.hinh_anh">Tên file: @{{ danhmuc.hinh_anh }}</p>
+                            <button type="button" class="btn btn-primary" ng-click="addDamhmuc()">Thêm danh mục</button>
                         </form>
+
                     </div>
                 </div>
             </div>
@@ -83,38 +106,17 @@
                             <tbody>
                                 <!-- Dữ liệu mẫu -->
                                 <tr>
-                                    <td><img src="https://via.placeholder.com/100" alt="Category 1" class="category-image"></td>
+                                    <td><img src="https://placehold.co/500" alt="Category 1" class="category-image"></td>
                                     <td>Category 1</td>
                                     <td>
-                                        <a href="#" class="btn btn-warning" onclick="editCategory(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteCategory(event)" style="display:inline;">
+                                        <a href="#" class="btn btn-warning" onclick="editCategory(event)"><i
+                                                class='bx bx-edit'></i></a>
+                                        <form action="#" method="POST" onsubmit="deleteCategory(event)"
+                                            style="display:inline;">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://via.placeholder.com/100" alt="Category 2" class="category-image"></td>
-                                    <td>Category 2</td>
-                                    <td>
-                                        <a href="#" class="btn btn-warning" onclick="editCategory(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteCategory(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://via.placeholder.com/100" alt="Category 3" class="category-image"></td>
-                                    <td>Category 3</td>
-                                    <td>
-                                        <a href="#" class="btn btn-warning" onclick="editCategory(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteCategory(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
+                                            <button type="submit" class="btn btn-danger"><i
+                                                    class='bx bx-trash'></i></button>
                                         </form>
                                     </td>
                                 </tr>
@@ -126,59 +128,32 @@
             </div>
         </div>
     </div>
-
     <script>
-        $(document).ready(function() {
-            $('#categoryTable').DataTable({
-                "language": {
-                    "lengthMenu": "Hiển thị _MENU_ mục",
-                    "zeroRecords": "Không tìm thấy kết quả",
-                    "info": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                    "infoEmpty": "Không có mục nào",
-                    "infoFiltered": "(lọc từ _MAX_ mục)",
-                    "search": "Tìm kiếm:",
-                    "paginate": {
-                        "first": "Đầu",
-                        "last": "Cuối",
-                        "next": "Tiếp",
-                        "previous": "Trước"
-                    }
-                }
-            });
-        });
+        function previewImage(event) {
+            let input = event.target;
+            let preview = document.getElementById("preview");
+            let removeBtn = document.getElementById("removeImageBtn");
 
-        function editCategory(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Chỉnh sửa danh mục',
-                text: 'Chức năng chỉnh sửa chưa được triển khai.',
-                icon: 'info',
-                confirmButtonText: 'OK'
-            });
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                    removeBtn.style.display = "inline-block"; // Hiện nút xóa
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
-        function deleteCategory(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Bạn có chắc chắn?',
-                text: "Bạn sẽ không thể hoàn tác hành động này!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Có, xóa nó!',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Đã xóa!',
-                        'Danh mục đã được xóa.',
-                        'success'
-                    );
-                    // Thực hiện hành động xóa ở đây
-                    event.target.submit();
-                }
-            });
+        function removeImage() {
+            let preview = document.getElementById("preview");
+            let input = document.getElementById("image");
+            let removeBtn = document.getElementById("removeImageBtn");
+
+            preview.src = ""; // Xóa ảnh
+            preview.style.display = "none"; // Ẩn ảnh
+            input.value = ""; // Xóa giá trị của input file
+            removeBtn.style.display = "none"; // Ẩn nút xóa
         }
     </script>
 @endsection

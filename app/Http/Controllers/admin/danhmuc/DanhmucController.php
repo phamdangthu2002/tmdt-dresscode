@@ -11,4 +11,5 @@ class DanhmucController extends Controller
     {
         return view('admin.danh-muc.index');
     }
+
 }
