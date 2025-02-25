@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('mo_ta')->nullable();
             $table->string('hinh_anh')->nullable();
             $table->unsignedBigInteger('danh_muc_id')->nullable(); // Khóa ngoại tham chiếu chính bảng này
-            $table->tinyInteger('trang_thai')->default(1);
+            $table->enum('trang_thai', ['active', 'inactive'])->default('active');
             $table->timestamps();
 
             // Khai báo khóa ngoại

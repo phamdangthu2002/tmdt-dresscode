@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->decimal('gia_goc', 15, 2);
             $table->decimal('gia_km_phan_tram', 5, 2)->nullable()->default(0); // Mặc định là 0% giảm giá
             $table->text('mota'); // Dùng text thay vì string nếu mô tả dài
+            $table->enum('trang_thai', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });
     }

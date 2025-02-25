@@ -20,3 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/add/danh-muc', [DanhmucController::class, 'addDanhmuc']);
+Route::get('/load/danh-muc', [DanhmucController::class, 'loadDanhmuc']);
+Route::get('/load/parent/danh-muc', [DanhmucController::class, 'loadParent']);
+Route::put('/update/danh-muc/{id}', [DanhmucController::class, 'updateDanhmuc']);
+Route::delete('/delete/danh-muc/{id}', [DanhmucController::class, 'deleteDanhmuc']);
+Route::post('/upload/file', [DanhmucController::class, 'uploadFile']);

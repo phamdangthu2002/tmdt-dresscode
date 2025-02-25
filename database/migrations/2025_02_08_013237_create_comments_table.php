@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('san_pham_id')->constrained('sanphams')->onDelete('cascade');
             $table->text('comment');
-            $table->tinyInteger('rating')->default(5); // Đánh giá từ 1-5 sao, mặc định 5
+            $table->float('rating')->default(5); // Đánh giá từ 1-5 sao, mặc định 5
             $table->timestamps();
         });
     }

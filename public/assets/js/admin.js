@@ -17,15 +17,15 @@ $(document).ready(function () {
     });
 });
 
-function editCategory(event) {
-    event.preventDefault();
-    Swal.fire({
-        title: "Chỉnh sửa danh mục",
-        text: "Chức năng chỉnh sửa chưa được triển khai.",
-        icon: "info",
-        confirmButtonText: "OK",
-    });
-}
+// function editCategory(event) {
+//     event.preventDefault();
+//     Swal.fire({
+//         title: "Chỉnh sửa danh mục",
+//         text: "Chức năng chỉnh sửa chưa được triển khai.",
+//         icon: "info",
+//         confirmButtonText: "OK",
+//     });
+// }
 
 function deleteCategory(event) {
     event.preventDefault();
@@ -78,3 +78,5 @@ function closeSidebarOutside(event) {
         document.body.removeEventListener("click", closeSidebarOutside, true);
     }
 }
+
+

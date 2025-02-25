@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('role')->default('user');
             $table->string('sex')->default('male');
             $table->string('birthday')->nullable();
-            $table->tinyInteger('trang_thai')->default(1);
+            $table->enum('trang_thai', ['active', 'inactive'])->default('active');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
