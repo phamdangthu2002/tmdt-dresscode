@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\DanhmucController;
+use App\Http\Controllers\auth\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,3 +26,4 @@ Route::get('/load/parent/danh-muc', [DanhmucController::class, 'loadParent']);
 Route::put('/update/danh-muc/{id}', [DanhmucController::class, 'updateDanhmuc']);
 Route::delete('/delete/danh-muc/{id}', [DanhmucController::class, 'deleteDanhmuc']);
 Route::post('/upload/file', [DanhmucController::class, 'uploadFile']);
+

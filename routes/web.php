@@ -6,7 +6,12 @@ use App\Http\Controllers\admin\sanpham\SanphamController;
 use App\Http\Controllers\admin\user\UserController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\user\HomeController;
+use App\Http\Middleware\VerifyRecaptcha;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Auth;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,11 +28,32 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('auth')->group(function () {
-    Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
+Route::get('/auth/facebook', function () {
+    return Socialite::driver('facebook')->redirect();
 });
 
-Route::prefix('admin')->group(function () {
+Route::get('/auth/facebook/callback', function () {
+    $facebookUser = Socialite::driver('facebook')->user();
+    $user = User::updateOrCreate([
+        'email' => $facebookUser->getEmail(),
+    ], [
+        'name' => $facebookUser->getName(),
+        'facebook_id' => $facebookUser->getId(),
+        'avatar' => $facebookUser->getAvatar(),
+    ]);
+
+    Auth::login($user);
+    return redirect('/dashboard');
+});
+
+Route::prefix('auth')->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
+});
+
+
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.index');
     Route::prefix('danh-muc')->group(function () {
         Route::get('/index/danh-muc', [DanhmucController::class, 'index'])->name('admin.danhmuc.index');

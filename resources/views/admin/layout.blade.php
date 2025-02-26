@@ -27,7 +27,7 @@
         <a href="{{ route('admin.user.index') }}"><i class="bx bx-user"></i><span>Users</span></a>
         <a href="{{ route('admin.danhmuc.index') }}"><i class="bx bxs-category"></i><span>Categories</span></a>
         <a href="#"><i class="bx bx-cog"></i><span>Settings</span></a>
-        <a href="#"><i class="bx bx-log-out"></i><span>Logout</span></a>
+        <a href="#" ng-click="logout()"><i class="bx bx-log-out"></i><span>Logout</span></a>
     </div>
 
     <div class="content">

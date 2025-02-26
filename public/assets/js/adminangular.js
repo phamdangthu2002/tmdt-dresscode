@@ -296,6 +296,42 @@ app.controller("CtrlAdmin", function ($scope, $http) {
         });
     };
 
+    $scope.logout = async function () {
+        Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Bạn có chắc chắn muốn đăng xuất không?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Đăng xuất",
+            cancelButtonText: "Hủy",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    var response = await $http.post("/auth/logout", {}, config);
+                    Swal.fire({
+                        icon: "success",
+                        title: "Đăng xuất thành công!",
+                        text: "Hẹn gặp lại bạn!",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    });
+                    setTimeout(() => {
+                        window.location.href = "/home"; // Điều hướng sau khi đăng xuất
+                    }, 2000);
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi đăng xuất",
+                        text: "Đã xảy ra lỗi khi đăng xuất. Vui lòng thử lại.",
+                    });
+                    console.log(error);
+                }
+            }
+        });
+    };
+
     // Cập nhật danh mục
     loadParent();
     getDanhmuc(); // Lấy danh sách danh mục ngay khi ứng dụng bắt đầu

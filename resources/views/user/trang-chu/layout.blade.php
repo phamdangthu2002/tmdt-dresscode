@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" ng-app="trangchu">
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/trangchu.css') }}">
 </head>
 
-<body>
+<body ng-controller="CtrlTrangchu">
     <!-- Header -->
     @include('user.trang-chu.header')
     <!-- Hero Section -->
@@ -30,9 +30,11 @@
     <!-- Newsletter -->
     @include('user.trang-chu.footer')
 
+    <script src="{{ asset('assets/vendor/angular.min.js') }}"></script>
     <script src="{{ asset('assets/js/trangchu.js') }}"></script>
     <script src="{{ asset('assets/vendor/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('assets/js/trangchuangular.js') }}"></script>
 </body>
 
 </html>
