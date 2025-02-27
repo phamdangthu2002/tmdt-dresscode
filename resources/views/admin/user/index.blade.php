@@ -2,14 +2,8 @@
 
 @section('content')
     <title>Quản lý người dùng</title>
-    <link href="{{ asset('assets/vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <script src="{{ asset('assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
+
     <style>
         .user-image {
             width: 50px;
@@ -51,25 +45,33 @@
                         <h2>Thêm người dùng</h2>
                     </div>
                     <div class="card-body">
-                        <form action="" method="POST" enctype="multipart/form-data">
+                        <form>
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label">Tên người dùng</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    ng-model="user.name">
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    ng-model="user.email">
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Mật khẩu</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password"
+                                    ng-model="user.password">
                             </div>
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Hình ảnh</label>
-                                <input type="file" class="form-control" id="image" name="image" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Thêm người dùng</button>
+                            <input type="file" class="form-control" id="image" accept="image/*"
+                                onchange="angular.element(this).scope().previewImage(event)">
+
+                            <!-- Hiển thị ảnh xem trước -->
+                            <img ng-show="user.avatar_preview" ng-src="@{{ user.avatar_preview }}" alt="Xem trước hình ảnh"
+                                style="max-width: 200px; margin-top: 10px;">
+
+                            <!-- Hiển thị tên file -->
+                            <p ng-show="user.avatar">Tên file: @{{ user.avatar }}</p>
+                            <button type="submit" class="btn btn-primary" ng-click="addUser()">Thêm người dùng</button>
                         </form>
                     </div>
                 </div>
@@ -85,6 +87,7 @@
                         <table id="userTable" class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Hình ảnh</th>
                                     <th>Tên người dùng</th>
                                     <th>Email</th>
@@ -93,106 +96,162 @@
                             </thead>
                             <tbody>
                                 <!-- Dữ liệu mẫu -->
-                                <tr>
-                                    <td><img src="https://via.placeholder.com/50" alt="User 1" class="user-image"></td>
-                                    <td>User 1</td>
-                                    <td>user1@example.com</td>
-                                    <td>
-                                        <a href="#" class="btn btn-warning" onclick="editUser(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteUser(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
+                                <div ng-if="loadUsers.length === 0" class="alert alert-warning" role="alert">
+                                    <i class="bx bx-info-circle"></i> Hiện tại chưa có danh mục nào. Hãy thêm một danh mục
+                                    mới!
+                                </div>
+                                <tr ng-repeat="user in loadUsers">
+                                    <td>@{{ user.id }}</td>
+                                    <td><img ng-src="@{{ user.avatar }}" alt=""
+                                            style="width: 50px;height: 50px;">
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://via.placeholder.com/50" alt="User 2" class="user-image"></td>
-                                    <td>User 2</td>
-                                    <td>user2@example.com</td>
+                                    <td>@{{ user.name }}</td>
+                                    <td>@{{ user.email }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-warning" onclick="editUser(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteUser(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
+                                        <span ng-if="user.trang_thai === 'active'">
+                                            <p class="badge text-success">Hoạt động</p>
+                                        </span>
+                                        <span ng-if="user.trang_thai === 'inactive'">
+                                            <p class="badge text-danger">Tạm khóa</p>
+                                        </span>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://via.placeholder.com/50" alt="User 3" class="user-image"></td>
-                                    <td>User 3</td>
-                                    <td>user3@example.com</td>
                                     <td>
-                                        <a href="#" class="btn btn-warning" onclick="editUser(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteUser(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
+                                        <a ng-click="editUser(user)" class="btn btn-warning"><i class="bx bx-edit"></i></a>
+                                        <a ng-click="deleteUser(user.id)" class="btn btn-danger"><i
+                                                class="bx bx-trash"></i></a>
                                     </td>
                                 </tr>
                                 <!-- Kết thúc dữ liệu mẫu -->
                             </tbody>
                         </table>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" ng-class="{ disabled: pagination.current_page === 1 }">
+                                    <a class="page-link" href="#"
+                                        ng-click="changePageUser(pagination.current_page - 1)">Trước</a>
+                                </li>
+                                <li class="page-item" ng-class="{ active: n === pagination.current_page }"
+                                    ng-repeat="n in paginationRangeUser() track by $index">
+                                    <a class="page-link" href="#"
+                                        ng-click="changePageUser(n)">@{{ n }}</a>
+                                </li>
+                                <li class="page-item"
+                                    ng-class="{ disabled: pagination.current_page === pagination.last_page }"> <a
+                                        class="page-link" href="#"
+                                        ng-click="changePageUser(pagination.current_page + 1)">Sau</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            $('#userTable').DataTable({
-                "language": {
-                    "lengthMenu": "Hiển thị _MENU_ mục",
-                    "zeroRecords": "Không tìm thấy kết quả",
-                    "info": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                    "infoEmpty": "Không có mục nào",
-                    "infoFiltered": "(lọc từ _MAX_ mục)",
-                    "search": "Tìm kiếm:",
-                    "paginate": {
-                        "first": "Đầu",
-                        "last": "Cuối",
-                        "next": "Tiếp",
-                        "previous": "Trước"
-                    }
-                }
-            });
-        });
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserLabel" aria-hidden="true"
+        data-backdrop="false" data-keyboard="true">
 
-        function editUser(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Chỉnh sửa người dùng',
-                text: 'Chức năng chỉnh sửa chưa được triển khai.',
-                icon: 'info',
-                confirmButtonText: 'OK'
-            });
-        }
-
-        function deleteUser(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Bạn có chắc chắn?',
-                text: "Bạn sẽ không thể hoàn tác hành động này!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Có, xóa nó!',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Đã xóa!',
-                        'Người dùng đã được xóa.',
-                        'success'
-                    );
-                    // Thực hiện hành động xóa ở đây
-                    event.target.submit();
-                }
-            });
-        }
-    </script>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserLabel">Chỉnh sửa Danh Mục</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="name">Tên Người Dùng</label>
+                                    <input type="text" class="form-control" ng-model="selectUser.name">
+                                    <div ng-if="errors.name" class="form-text text-danger">
+                                        @{{ errors.name[0] }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input class="form-control" ng-model="selectUser.email" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" ng-model="selectUser.password_new"
+                                placeholder="Nếu có thay đổi">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="role">Vai Trò</label>
+                                    <select class="form-control" id="role" ng-model="selectUser.role">
+                                        <option value="admin">Admin</option>
+                                        <option value="user">User</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sex">Sex</label>
+                                    <select class="form-control" id="sex" ng-model="selectUser.sex">
+                                        <option value="male">Nam</option>
+                                        <option value="female">Nữ</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Số Điện Thoại</label>
+                                    <input type="text" class="form-control" ng-model="selectUser.phone">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address">Địa Chỉ</label>
+                                    <input type="text" class="form-control" ng-model="selectUser.address">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="trangThai">Trạng Thái</label>
+                            <select class="form-control" id="trangThai" ng-model="selectUser.trang_thai">
+                                <option value="active">Hoạt động</option>
+                                <option value="inactive">Tạm khóa</option>
+                            </select>
+                            <div ng-if="errors.trang_thai" class="form-text text-danger">
+                                @{{ errors.trang_thai[0] }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="avatar">Avatar</label>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="file" class="form-control" id="avatar" accept="image/*"
+                                        onchange="angular.element(this).scope().previewImage_edit(event)">
+                                    <div ng-if="errors.avatar" class="form-text text-danger">
+                                        @{{ errors.avatar[0] }}
+                                    </div>
+                                    <label>Ảnh xem trước</label>
+                                    <img ng-show="user.avatar_preview_edit" ng-src="@{{ user.avatar_preview_edit }}"
+                                        alt="Xem trước hình ảnh" style="max-width: 200px; margin-top: 10px;">
+                                    <img ng-show="selectUser.avatar_preview_edit" ng-src="@{{ selectUser.avatar_preview_edit }}"
+                                        alt="Xem trước hình ảnh" style="max-width: 200px; margin-top: 10px;">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Ảnh đã lưu</label>
+                                    <img ng-src="@{{ selectUser.avatar }}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" ng-click="updateUser()">Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

@@ -10,7 +10,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class DanhmucController extends Controller
+class ApiDanhmucController extends Controller
 {
     public function uploadFile(Request $request)
     {

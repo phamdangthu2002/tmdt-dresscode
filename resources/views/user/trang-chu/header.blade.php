@@ -65,7 +65,9 @@
 
                 <!-- Nút đăng nhập -->
                 @if (Auth::check())
-                    <label for="name" class="nav-link mx-2">Hi {{ Auth::user()->name }}!</label>
+                    <label for="name" class="nav-link mx-2" style="cursor: pointer;"><a href="#"
+                            style="text-decoration: none;color: black">Hi
+                            {{ Auth::user()->name }}!</a></label>
                     <a href="#" ng-click="logout()" class="btn btn-outline-brand rounded-pill px-3">
                         <i class="fas fa-user me-2"></i>Đăng xuất
                     </a>

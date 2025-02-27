@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\api\DanhmucController;
+use App\Http\Controllers\api\ApiDanhmucController;
+use App\Http\Controllers\api\ApiUserController;
 use App\Http\Controllers\auth\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,10 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/add/danh-muc', [DanhmucController::class, 'addDanhmuc']);
-Route::get('/load/danh-muc', [DanhmucController::class, 'loadDanhmuc']);
-Route::get('/load/parent/danh-muc', [DanhmucController::class, 'loadParent']);
-Route::put('/update/danh-muc/{id}', [DanhmucController::class, 'updateDanhmuc']);
-Route::delete('/delete/danh-muc/{id}', [DanhmucController::class, 'deleteDanhmuc']);
-Route::post('/upload/file', [DanhmucController::class, 'uploadFile']);
+Route::post('/upload/file', [ApiDanhmucController::class, 'uploadFile']);
+
+Route::post('/add/danh-muc', [ApiDanhmucController::class, 'addDanhmuc']);
+Route::get('/load/danh-muc', [ApiDanhmucController::class, 'loadDanhmuc']);
+Route::get('/load/parent/danh-muc', [ApiDanhmucController::class, 'loadParent']);
+Route::put('/update/danh-muc/{id}', [ApiDanhmucController::class, 'updateDanhmuc']);
+Route::delete('/delete/danh-muc/{id}', [ApiDanhmucController::class, 'deleteDanhmuc']);
+
+Route::post('/add/user', [ApiUserController::class, 'addUser']);
+Route::get('/load/user', [ApiUserController::class, 'loadUser']);
+Route::put('/update/user/{id}', [ApiUserController::class, 'updateUser']);
+Route::delete('/delete/user/{id}', [ApiUserController::class, 'deleteUser']);
 

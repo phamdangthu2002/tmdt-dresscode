@@ -1,118 +1,7 @@
 @extends('admin.layout')
 @section('content')
     <title>Quản lý danh mục</title>
-    <style>
-        .category-image {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-        }
-
-        .category-card {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-
-        .category-card img {
-            margin-right: 10px;
-        }
-
-        .category-card .category-info {
-            flex: 1;
-        }
-
-        .category-card .category-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-
-
-
-        /* Định dạng form */
-        form {
-            font-family: Arial, sans-serif;
-            padding: 15px;
-        }
-
-        /* Định dạng nhóm input */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        /* Nhãn input */
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* Input, textarea, select */
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-
-        /* Căn chỉnh textarea */
-        textarea {
-            height: 80px;
-            resize: vertical;
-        }
-
-        /* Input file */
-        input[type="file"] {
-            padding: 5px;
-        }
-
-        /* Ảnh xem trước */
-        img {
-            max-width: 200px;
-            height: auto;
-            border-radius: 5px;
-            margin-top: 10px;
-            border: 1px solid #ddd;
-            padding: 5px;
-            background: #f8f8f8;
-        }
-
-        /* Nút bấm */
-        button {
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-
-        /* Nút lưu */
-        .btn-primary {
-            background: blue;
-            color: white;
-        }
-
-        /* Nút đóng */
-        .btn-secondary {
-            background: gray;
-            color: white;
-        }
-
-        /* Hiệu ứng hover */
-        .btn-primary:hover {
-            background: darkblue;
-        }
-
-        .btn-secondary:hover {
-            background: darkgray;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
     <div class="container mt-5">
         <h1 class="mb-4">Quản lý danh mục</h1>
         <div class="row">
@@ -143,7 +32,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="danh_muc_id" class="form-label">Danh mục cha</label>
-                                <select name="danh_muc_id" id="danh_muc_id" class="form-control" ng-model="danhmuc.danh_muc_id">
+                                <select name="danh_muc_id" id="danh_muc_id" class="form-control"
+                                    ng-model="danhmuc.danh_muc_id">
                                     <option value="">-- Chọn danh mục cha --</option>
                                     <option ng-repeat="danhmuc in parent_id" value="@{{ danhmuc.id }}">
                                         @{{ danhmuc.ten_danh_muc }}
@@ -233,17 +123,17 @@
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" ng-class="{ disabled: pagination.current_page === 1 }">
                                     <a class="page-link" href="#"
-                                        ng-click="changePage(pagination.current_page - 1)">Trước</a>
+                                        ng-click="changePageDanhmuc(pagination.current_page - 1)">Trước</a>
                                 </li>
                                 <li class="page-item" ng-class="{ active: n === pagination.current_page }"
-                                    ng-repeat="n in paginationRange() track by $index">
+                                    ng-repeat="n in paginationRangeDanhmuc() track by $index">
                                     <a class="page-link" href="#"
-                                        ng-click="changePage(n)">@{{ n }}</a>
+                                        ng-click="changePageDanhmuc(n)">@{{ n }}</a>
                                 </li>
                                 <li class="page-item"
                                     ng-class="{ disabled: pagination.current_page === pagination.last_page }"> <a
                                         class="page-link" href="#"
-                                        ng-click="changePage(pagination.current_page + 1)">Sau</a>
+                                        ng-click="changePageDanhmuc(pagination.current_page + 1)">Sau</a>
                                 </li>
                             </ul>
                         </nav>

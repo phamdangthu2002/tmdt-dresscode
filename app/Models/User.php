@@ -13,7 +13,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -51,10 +51,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    protected function avatar(): Attribute
-    {
-        return Attribute::get(function ($value) {
-            return $value ? asset('storage/' . $value) : asset('upload/avatar/avatar_default.png');
-        });
-    }
+    // protected function avatar(): Attribute
+    // {
+    //     return Attribute::get(function ($value) {
+    //         return $value ? asset('storage/' . $value) : asset('upload/avatar/avatar_default.png');
+    //     });
+    // }
 }
