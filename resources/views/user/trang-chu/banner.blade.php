@@ -7,7 +7,7 @@
                     <div class="collection-overlay">
                         <h3 class="mb-2">Bộ Sưu Tập Hè 2025</h3>
                         <p class="mb-3">Tươi mát và năng động cho mùa hè sôi động</p>
-                        <a href="#" class="btn btn-sm btn-light rounded-pill"
+                        <a href="#" class="btn btn-sm btn-light rounded-pill banner"
                             onclick="showUnderConstruction()">Khám phá ngay</a>
                     </div>
                 </div>
@@ -18,7 +18,7 @@
                     <div class="collection-overlay">
                         <h3 class="mb-2">Bộ Sưu Tập Thu 2025</h3>
                         <p class="mb-3">Ấm áp và phong cách cho những ngày se lạnh</p>
-                        <a href="#" class="btn btn-sm btn-light rounded-pill"
+                        <a href="#" class="btn btn-sm btn-light rounded-pill banner"
                             onclick="showUnderConstruction()">Khám phá ngay</a>
                     </div>
                 </div>

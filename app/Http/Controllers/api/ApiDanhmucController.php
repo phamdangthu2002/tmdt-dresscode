@@ -12,6 +12,34 @@ use Illuminate\Support\Facades\Validator;
 
 class ApiDanhmucController extends Controller
 {
+    public function uploadMultipleFiles(Request $request)
+    {
+        if ($request->hasFile('image')) {
+            $uploadedFiles = $request->file('image');
+            $uploadedUrls = [];
+
+            foreach ($uploadedFiles as $file) {
+                $dateFolder = date('Y/m/d'); // Tạo thư mục theo ngày
+                $fileName = time() . '_' . $file->getClientOriginalName(); // Tránh trùng tên
+
+                // Lưu vào thư mục storage
+                $filePath = $file->storeAs("public/uploads/$dateFolder", $fileName);
+                $url = Storage::url(str_replace('public/', '', $filePath)); // Tạo URL truy cập
+
+                $uploadedUrls[] = $url;
+            }
+
+            return response()->json([
+                'success' => true,
+                'urls' => $uploadedUrls,
+                'message' => 'Upload thành công!'
+            ]);
+        }
+
+        return response()->json(['error' => 'Không có file được tải lên!'], 400);
+    }
+
+
     public function uploadFile(Request $request)
     {
         if ($request->hasFile('file')) {
@@ -85,6 +113,16 @@ class ApiDanhmucController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
         }
     }// Load danh mục
+
+    public function loadDanhmucHome()
+    {
+        try {
+            $danhmucs = Danhmuc::all(); // Lấy danh sách danh mục theo trang
+            return response()->json(['danhmucs' => $danhmucs], 200);
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
+        }
+    }
 
     public function loadParent()
     {

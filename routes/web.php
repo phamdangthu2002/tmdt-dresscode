@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AdminController;
 use App\Http\Controllers\admin\danhmuc\DanhmucController;
 use App\Http\Controllers\admin\sanpham\SanphamController;
+use App\Http\Controllers\admin\size_color\MixController;
 use App\Http\Controllers\admin\user\UserController;
 use App\Http\Controllers\auth\AuthController;
 use App\Http\Controllers\user\HomeController;
@@ -63,6 +64,18 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     });
     Route::prefix('user')->group(function () {
         Route::get('/index/user', [UserController::class, 'index'])->name('admin.user.index');
+    });
+    Route::prefix('size')->group(function () {
+        Route::get('/index/size', [MixController::class, 'indexSize'])->name('admin.size.index');
+        Route::post('/add/size', [MixController::class, 'addSize'])->name('admin.size.add');
+        Route::post('/update/{id}', [MixController::class, 'updateSize'])->name('admin.size.update');
+        Route::get('/delete/{id}', [MixController::class, 'deleteSize'])->name('admin.size.delete');
+    });
+    Route::prefix('color')->group(function () {
+        Route::get('/index/color', [MixController::class, 'indexColor'])->name('admin.color.index');
+        Route::post('/add/color', [MixController::class, 'addColor'])->name('admin.color.add');
+        Route::post('/update/{id}', [MixController::class, 'updateColor'])->name('admin.color.update');
+        Route::get('/delete/{id}',[MixController::class,'deleteColor'])->name('admin.color.delete');
     });
 });
 

@@ -12,7 +12,6 @@ return new class extends Migration {
     {
         Schema::create('anhs', function (Blueprint $table) {
             $table->id();
-            $table->string('ten_anh');
             $table->string('url_anh');
             $table->foreignId('san_pham_id')->constrained('sanphams')->onDelete('cascade');
             $table->timestamps();

@@ -2,14 +2,8 @@
 
 @section('content')
     <title>Quản lý sản phẩm</title>
-    <link href="{{ asset('assets/vendor/bootstrap-5.3.3-dist/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    <script src="{{ asset('assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="{{ asset('assets/css/admin.css') }}">
+
     <style>
         .product-image {
             width: 100px;
@@ -50,21 +44,91 @@
                         <h2>Thêm sản phẩm</h2>
                     </div>
                     <div class="card-body">
-                        <form action="" method="POST" enctype="multipart/form-data">
+                        <form enctype="multipart/form-data">
                             @csrf
                             <div class="mb-3">
-                                <label for="name" class="form-label">Tên sản phẩm</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="tensp" class="form-label">Tên sản phẩm</label>
+                                <input type="text" class="form-control" id="tensp" name="tensp"
+                                    ng-model="sanphams.tensp">
+                                <div ng-if="errors.tensp" class="form-text text-danger">
+                                    @{{ errors.tensp[0] }}
+                                </div>
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Giá</label>
-                                <input type="number" class="form-control" id="price" name="price" required>
+                                <label for="mo_ta">Mô tả</label>
+                                <input class="form-control" id="mo_ta" name="mo_ta" ng-model="sanphams.mo_ta">
                             </div>
                             <div class="mb-3">
-                                <label for="image" class="form-label">Hình ảnh</label>
-                                <input type="file" class="form-control" id="image" name="image" required>
+                                <label for="mota_chitiet">Mô tả chi tiết</label>
+                                <textarea class="form-control" id="mota_chitiet" name="mota_chitiet" ng-model="sanphams.mota_chitiet"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Thêm sản phẩm</button>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="gia_goc" class="form-label">Giá</label>
+                                        <input type="number" class="form-control" id="gia_goc" name="gia_goc"
+                                            ng-model="sanphams.gia_goc">
+                                        <div ng-if="errors.gia_goc" class="form-text text-danger">
+                                            @{{ errors.gia_goc[0] }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="gia_km_phan_tram" class="form-label">% Giảm</label>
+                                        <input type="number" class="form-control" id="gia_km_phan_tram"
+                                            name="gia_km_phan_tram" ng-model="sanphams.gia_km_phan_tram">
+                                        <div ng-if="errors.gia_km_phan_tram" class="form-text text-danger">
+                                            @{{ errors.gia_km_phan_tram[0] }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="mb-3">
+                                        <label for="color" class="form-label">Color</label>
+                                        <select class="form-select" id="color_id" name="color_id" ng-model="sanphams.color_id">
+                                            <option value="">--Chọn màu sắc--</option>
+                                            <option ng-repeat="color in loadColor" value="@{{ color.id }}">
+                                                @{{ color.name }}</option>
+                                        </select>
+                                        <div ng-if="errors.color_id" class="form-text text-danger">
+                                            @{{ errors.color_id[0] }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="mb-3">
+                                        <label for="danh_muc_id ">Danh mục</label>
+                                        <select class="form-select" id="danh_muc_id" name="danh_muc_id"
+                                            ng-model="sanphams.danh_muc_id">
+                                            <option value="">--Chọn danh mục--</option>
+                                            <option ng-repeat="danhmuc in parent_id" value="@{{ danhmuc.id }}">
+                                                @{{ danhmuc.ten_danh_muc }}
+                                            </option>
+                                        </select>
+                                        <div ng-if="errors.danh_muc_id" class="form-text text-danger">
+                                            @{{ errors.danh_muc_id[0] }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="anhsp" class="form-label">Hình ảnh</label>
+                                <input type="file" class="form-control" id="anhsp" accept="image/*"
+                                    onchange="angular.element(this).scope().uploadToServer(event)" multiple
+                                    ng-model="sanphams.anhsp">
+                                <div ng-if="errors.anhsp" class="form-text text-danger">
+                                    @{{ errors.anhsp[0] }}
+                                </div>
+                            </div>
+                            <div id="anhsp_preview" class="d-flex flex-wrap mt-2">
+                                <img ng-repeat="img in previewImages" ng-src="@{{ img }}"
+                                    class="img-thumbnail m-1" width="100">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" ng-click="addSanpham()">Thêm sản phẩm</button>
                         </form>
                     </div>
                 </div>
@@ -80,114 +144,145 @@
                         <table id="productTable" class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Hình ảnh</th>
                                     <th>Tên sản phẩm</th>
                                     <th>Giá</th>
+                                    <th>% KM</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Dữ liệu mẫu -->
-                                <tr>
-                                    <td><img src="https://placehold.co/100" alt="Product 1" class="product-image"></td>
-                                    <td>Product 1</td>
-                                    <td>$100</td>
+                                <tr ng-repeat="sanpham in loadSanphams">
+                                    <td>@{{ sanpham.id }}</td>
+                                    <td><img ng-src="@{{ sanpham.anhsp }}" width="50"></td>
+                                    <td>@{{ sanpham.tensp }}</td>
+                                    <td>@{{ sanpham.gia_goc | number }}VND</td>
+                                    <td>@{{ sanpham.gia_km_phan_tram }}%</td>
                                     <td>
-                                        <a href="#" class="btn btn-warning" onclick="editProduct(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteProduct(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://placehold.co/100" alt="Product 2" class="product-image"></td>
-                                    <td>Product 2</td>
-                                    <td>$200</td>
-                                    <td>
-                                        <a href="#" class="btn btn-warning" onclick="editProduct(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteProduct(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><img src="https://placehold.co/100" alt="Product 3" class="product-image"></td>
-                                    <td>Product 3</td>
-                                    <td>$150</td>
-                                    <td>
-                                        <a href="#" class="btn btn-warning" onclick="editProduct(event)"><i class='bx bx-edit'></i></a>
-                                        <form action="#" method="POST" onsubmit="deleteProduct(event)" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger"><i class='bx bx-trash'></i></button>
-                                        </form>
+                                        <a href="#" class="btn btn-warning" ng-click="editSanpham(sanpham)"><i
+                                                class="bx bx-edit"></i></a>
+                                        <a href="#" class="btn btn-danger" ng-click="deleteSanpham(sanpham.id)"><i
+                                                class="bx bx-trash"></i></a>
                                     </td>
                                 </tr>
                                 <!-- Kết thúc dữ liệu mẫu -->
                             </tbody>
                         </table>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" ng-class="{ disabled: pagination.current_page === 1 }">
+                                    <a class="page-link" href="#"
+                                        ng-click="changePageSanpham(pagination.current_page - 1)">Trước</a>
+                                </li>
+                                <li class="page-item" ng-class="{ active: n === pagination.current_page }"
+                                    ng-repeat="n in paginationRangeSanpham() track by $index">
+                                    <a class="page-link" href="#"
+                                        ng-click="changePageSanpham(n)">@{{ n }}</a>
+                                </li>
+                                <li class="page-item"
+                                    ng-class="{ disabled: pagination.current_page === pagination.last_page }"> <a
+                                        class="page-link" href="#"
+                                        ng-click="changePageSanpham(pagination.current_page + 1)">Sau</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- 🟢 Modal Sửa Sản Phẩm -->
+    <!-- Modal Sửa Sản Phẩm -->
+    <div class="modal fade" id="editSanphamModal" tabindex="-1" aria-labelledby="editSanphamLabel" aria-hidden="true"
+        data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editSanphamLabel">Sửa Sản Phẩm</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tên sản phẩm</label>
+                                    <input type="text" class="form-control" ng-model="selectedSanpham.tensp">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label>Danh mục sản phẩm</label>
+                                <div class="form-group">
+                                    <select class="form-control" id="danhmuc_id" ng-model="selectedSanpham.danh_muc_id">
+                                        <option ng-repeat="danhmuc in loadDanhmucs" ng-value="danhmuc.id">
+                                            @{{ danhmuc.ten_danh_muc }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Giá gốc</label>
+                                    <input type="number" class="form-control" ng-model="selectedSanpham.gia_goc">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Giá khuyến mãi (%)</label>
+                                    <input type="number" class="form-control"
+                                        ng-model="selectedSanpham.gia_km_phan_tram">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="size" class="form-label">Color</label>
+                                    <select class="form-select" ng-model="selectedSanpham.color">
+                                        <option ng-repeat="color in loadColor" ng-value="color.id">
+                                            @{{ color.name }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mo_ta">Mô tả</label>
+                            <input type="text" class="form-control" name="mo_ta" ng-model="selectedSanpham.mo_ta">
+                        </div>
+                        <div class="form-group">
+                            <label for="mota_chitiet">Mô tả chi tiết</label>
+                            <textarea class="form-control" name="mota_chitiet" ng-model="selectedSanpham.mota_chitiet"></textarea>
+                        </div>
 
-    <script>
-        $(document).ready(function() {
-            $('#productTable').DataTable({
-                "language": {
-                    "lengthMenu": "Hiển thị _MENU_ mục",
-                    "zeroRecords": "Không tìm thấy kết quả",
-                    "info": "Hiển thị _START_ đến _END_ của _TOTAL_ mục",
-                    "infoEmpty": "Không có mục nào",
-                    "infoFiltered": "(lọc từ _MAX_ mục)",
-                    "search": "Tìm kiếm:",
-                    "paginate": {
-                        "first": "Đầu",
-                        "last": "Cuối",
-                        "next": "Tiếp",
-                        "previous": "Trước"
-                    }
-                }
-            });
-        });
-
-        function editProduct(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Chỉnh sửa sản phẩm',
-                text: 'Chức năng chỉnh sửa chưa được triển khai.',
-                icon: 'info',
-                confirmButtonText: 'OK'
-            });
-        }
-
-        function deleteProduct(event) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Bạn có chắc chắn?',
-                text: "Bạn sẽ không thể hoàn tác hành động này!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Có, xóa nó!',
-                cancelButtonText: 'Hủy'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        'Đã xóa!',
-                        'Sản phẩm đã được xóa.',
-                        'success'
-                    );
-                    // Thực hiện hành động xóa ở đây
-                    event.target.submit();
-                }
-            });
-        }
-    </script>
+                        <div class="form-group">
+                            <label>Hình ảnh</label>
+                            <!-- Input chọn ảnh mới -->
+                            <input type="file" class="form-control" id="hinh_anh" accept="image/*"
+                                onchange="angular.element(this).scope().previewImage_sanpham(event)">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Hiển thị ảnh gốc -->
+                                    <label>Ảnh gốc</label>
+                                    <img ng-src="@{{ selectedSanpham.anhsp }}" width="80">
+                                </div>
+                                <div class="col-md-6">
+                                    <!-- Xem trước ảnh mới -->
+                                    <label>Ảnh mới</label>
+                                    <div class="preview mt-2">
+                                        <img ng-show="selectedSanpham.anhsp_preview" ng-src="@{{ selectedSanpham.anhsp_preview }}"
+                                            alt="Xem trước hình ảnh" width="80">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" ng-click="updateSanpham()">Lưu thay đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

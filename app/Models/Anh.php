@@ -9,15 +9,15 @@ class Anh extends Model
 {
     use HasFactory;
     protected $table = 'anhs';
-    protected $fillable = ['ten_anh', 'san_pham_id', 'url'];
+    protected $fillable = ['san_pham_id', 'url_anh'];
 
     public function sanpham()
     {
         return $this->belongsTo(Sanpham::class, 'san_pham_id');
     }
 
-    public function getUrlAttribute($value)
-    {
-        return asset('storage/' . $value);
-    }
+    // public function getUrlAttribute($value)
+    // {
+    //     return asset('storage/' . $value);
+    // }
 }

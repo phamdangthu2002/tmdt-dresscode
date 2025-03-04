@@ -32,7 +32,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="danh_muc_id" class="form-label">Danh mục cha</label>
-                                <select name="danh_muc_id" id="danh_muc_id" class="form-control"
+                                <select name="danh_muc_id" id="danh_muc_id" class="form-select"
                                     ng-model="danhmuc.danh_muc_id">
                                     <option value="">-- Chọn danh mục cha --</option>
                                     <option ng-repeat="danhmuc in parent_id" value="@{{ danhmuc.id }}">
@@ -178,7 +178,7 @@
                         </div>
                         <div class="form-group">
                             <label for="danh_muc_id" class="form-label">Danh mục cha</label>
-                            <select name="danh_muc_id" id="danh_muc_id" class="form-control"
+                            <select name="danh_muc_id" id="danh_muc_id" class="form-select"
                                 ng-model="selectedDanhmuc.danh_muc_id">
                                 <option value="">-- Chọn danh mục cha --</option>
                                 <option ng-repeat="danhmuc in parent_id" ng-value="danhmuc.id">
@@ -196,8 +196,6 @@
                                         @{{ errors.hinh_anh[0] }}
                                     </div>
                                     <label>Ảnh xem trước</label>
-                                    <img ng-show="danhmuc.hinh_anh_preview_edit" ng-src="@{{ danhmuc.hinh_anh_preview_edit }}"
-                                        alt="Xem trước hình ảnh" style="max-width: 200px; margin-top: 10px;">
                                     <img ng-show="selectedDanhmuc.hinh_anh_preview_edit" ng-src="@{{ selectedDanhmuc.hinh_anh_preview_edit }}"
                                         alt="Xem trước hình ảnh" style="max-width: 200px; margin-top: 10px;">
                                 </div>

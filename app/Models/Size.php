@@ -13,7 +13,7 @@ class Size extends Model
 
     public function sanphams()
     {
-        return $this->belongsToMany(Sanpham::class, 'size_sanpham', 'size_id', 'san_pham_id');
+        return $this->belongsToMany(Sanpham::class, 'size_sp', 'size_id', 'san_pham_id');
     }
 
     public function sizesp()

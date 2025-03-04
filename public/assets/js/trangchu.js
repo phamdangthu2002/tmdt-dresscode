@@ -213,40 +213,6 @@ function checkout() {
     });
 }
 
-function showQuickView(productName) {
-    let product = productData[productName];
-
-    if (!product) return;
-
-    document.getElementById("quickViewModalLabel").innerText = productName;
-    document.getElementById("quickViewModalImage").src = product.image;
-    document.getElementById("quickViewModalPrice").innerText = product.price;
-    document.getElementById("quickViewModalDescription").innerText =
-        product.description;
-
-    let sizeSelect = document.getElementById("quickViewModalSizes");
-    let colorSelect = document.getElementById("quickViewModalColors");
-    let materialSelect = document.getElementById("quickViewModalMaterials");
-
-    sizeSelect.innerHTML = product.sizes
-        .map((size) => `<option>${size}</option>`)
-        .join("");
-    colorSelect.innerHTML = product.colors
-        .map((color) => `<option>${color}</option>`)
-        .join("");
-    materialSelect.innerHTML = product.materials
-        .map((material) => `<option>${material}</option>`)
-        .join("");
-
-    document.getElementById("quickViewPopup").style.display = "block";
-    document.getElementById("quickViewOverlay").style.display = "block";
-}
-
-function closeQuickView() {
-    document.getElementById("quickViewPopup").style.display = "none";
-    document.getElementById("quickViewOverlay").style.display = "none";
-}
-
 function buyNow(productName) {
     const selectedSize = document.getElementById("quickViewModalSizes").value;
     Swal.fire({

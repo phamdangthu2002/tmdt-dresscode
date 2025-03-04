@@ -24,14 +24,16 @@
                         Bộ sưu tập
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="collectionDropdown">
-                        <li><a class="dropdown-item" href="#" onclick="showUnderConstruction()">Bộ sưu tập
-                                Hè</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showUnderConstruction()">Bộ sưu tập
-                                Thu</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showUnderConstruction()">Bộ sưu tập
-                                Đông</a></li>
-                        <li><a class="dropdown-item" href="#" onclick="showUnderConstruction()">Bộ sưu tập
-                                Xuân</a></li>
+                        {{-- <li>
+                            <a class="dropdown-item" href="#" onclick="showUnderConstruction()">
+                                Bộ sưu tập Hè
+                            </a>
+                        </li> --}}
+                        <li ng-repeat="danhmuc in danhmucs">
+                            <a class="dropdown-item" ng-value="danhmuc.id" href="#" onclick="showUnderConstruction()">
+                                @{{danhmuc.ten_danh_muc}}
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <li class="nav-item">

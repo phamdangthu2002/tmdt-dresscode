@@ -7,6 +7,7 @@ app.controller("CtrlAdmin", function ($scope, $http) {
         },
     };
     $scope.error = [];
+
     $scope.loadDanhmucs = [];
     $scope.pagination = {};
     $scope.selectedDanhmuc = [];
@@ -15,11 +16,22 @@ app.controller("CtrlAdmin", function ($scope, $http) {
     $scope.loadUsers = [];
     $scope.selectUser = [];
 
+    $scope.previewImages = []; // Lưu ảnh xem trước
+    $scope.loadSize = [];
+    $scope.loadColor = [];
+
+    $scope.loadSanphams = [];
+    $scope.selectedSanpham = [];
+
+    $scope.urlUpload = "/api/upload/file";
+    $scope.urlUploadMultipleFiles = "/api/upload/files";
+    $scope.urlloadSize = "/api/load/size";
+    $scope.urlloadColor = "/api/load/color";
+
     // Lấy danh sách danh mục
     $scope.urlDanhmuc = "/api/add/danh-muc";
     $scope.urlLoadDanhmuc = "/api/load/danh-muc";
     $scope.loadParent = "/api/load/parent/danh-muc";
-    $scope.urlUpload = "/api/upload/file";
     $scope.urlUpdateDanhmuc = "/api/update/danh-muc";
     $scope.urlDeleteDanhmuc = "/api/delete/danh-muc";
 
@@ -28,6 +40,12 @@ app.controller("CtrlAdmin", function ($scope, $http) {
     $scope.urlLoadUser = "/api/load/user";
     $scope.urlUpdateUser = "/api/update/user";
     $scope.urlDeleteUser = "/api/delete/user";
+
+    // Lấy danh sách sản phẩm
+    $scope.urlAddSanpham = "/api/add/san-pham";
+    $scope.urlLoadSanpham = "/api/load/san-pham";
+    $scope.urlUpdateSanpham = "/api/update/san-pham";
+    $scope.urlDeleteSanpham = "/api/delete/san-pham";
 
     $scope.danhmuc = {
         ten_danh_muc: "",
@@ -43,6 +61,53 @@ app.controller("CtrlAdmin", function ($scope, $http) {
         email: "",
         password: "",
         avatar: "",
+    };
+
+    $scope.sanphams = {
+        tensp: "",
+        danh_muc_id: "",
+        gia_goc: "",
+        gia_km_phan_tram: "",
+        mo_ta: "",
+        mota_chitiet: "",
+        color_id: "",
+        anhsp: "", // Chỉ lưu tên file
+    };
+
+    $scope.uploadToServer = function (event) {
+        let files = event.target.files; // Lấy danh sách file từ sự kiện
+        if (files.length === 0) return; // Không có file thì thoát luôn
+
+        let formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+
+            // 1️⃣ Đọc ảnh để hiển thị trước
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                $scope.$apply(() => {
+                    $scope.previewImages.push(e.target.result);
+                });
+            };
+            reader.readAsDataURL(file);
+
+            // 2️⃣ Thêm file vào formData để gửi lên server
+            formData.append("image[]", file);
+        }
+
+        // 3️⃣ Gửi request lên server
+        $http
+            .post($scope.urlUploadMultipleFiles, formData, {
+                headers: { "Content-Type": undefined },
+                transformRequest: angular.identity,
+            })
+            .then(function (response) {
+                $scope.sanphams.anhsp = response.data.urls;
+                console.log("Upload thành công!", response.data);
+            })
+            .catch(function (error) {
+                console.error("Lỗi upload:", error);
+            });
     };
 
     //danh muc
@@ -121,6 +186,40 @@ app.controller("CtrlAdmin", function ($scope, $http) {
                 });
         }
     };
+    $scope.previewImage_sanpham = function (event) {
+        let input = event.target;
+        if (input.files && input.files[0]) {
+            let file = input.files[0];
+
+            // 1️⃣ Đọc file để hiển thị trước
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                $scope.$applyAsync(() => {
+                    // Dùng $applyAsync để tránh lỗi
+                    $scope.selectedSanpham.anhsp_preview = e.target.result;
+                });
+            };
+            reader.readAsDataURL(file);
+
+            // 2️⃣ Tạo FormData để upload ảnh lên server
+            let formData = new FormData();
+            formData.append("file", file);
+
+            // 3️⃣ Gửi file lên server
+            $http
+                .post($scope.urlUpload, formData, {
+                    headers: { "Content-Type": undefined },
+                    transformRequest: angular.identity,
+                })
+                .then((response) => {
+                    console.log("Upload thành công!", response.data);
+                    $scope.selectedSanpham.anhsp_edit = response.data.url; // Lưu đường dẫn ảnh từ server
+                })
+                .catch((error) => {
+                    console.error("Lỗi upload:", error);
+                });
+        }
+    };
 
     // Gửi danh mục lên server (bỏ hinh_anh_preview)
     $scope.addDamhmuc = async function () {
@@ -141,6 +240,7 @@ app.controller("CtrlAdmin", function ($scope, $http) {
             $scope.$apply(() => {
                 $scope.danhmuc = {}; // Reset form
                 $scope.errors = {}; // Xóa lỗi nếu có trước đó
+                loadParent();
             });
             getDanhmuc(); // Lấy danh sách danh mục mới nhất
         } catch (error) {
@@ -258,6 +358,40 @@ app.controller("CtrlAdmin", function ($scope, $http) {
         }
         return pages;
     };
+    $scope.paginationRangeSanpham = function () {
+        const maxVisiblePages = 3; // số trang hiển thị nhiều nhất
+        const pages = [];
+        const current = $scope.pagination.current_page;
+        const last = $scope.pagination.last_page;
+        if (last <= maxVisiblePages) {
+            for (let i = 1; i <= last; i++) {
+                pages.push(i);
+            }
+        } else {
+            let start = Math.max(current - Math.floor(maxVisiblePages / 2), 1);
+            let end = start + maxVisiblePages - 1;
+            if (end > last) {
+                end = last;
+                start = end - maxVisiblePages + 1;
+            }
+            if (start > 1) {
+                pages.push(1);
+                if (start > 2) {
+                    pages.push("...");
+                }
+            }
+            for (let i = start; i <= end; i++) {
+                pages.push(i);
+            }
+            if (end < last) {
+                if (end < last - 1) {
+                    pages.push("...");
+                }
+                pages.push(last);
+            }
+        }
+        return pages;
+    };
     $scope.changePageDanhmuc = function (page) {
         if (page === "..." || page < 1 || page > $scope.pagination.last_page) {
             return;
@@ -269,6 +403,12 @@ app.controller("CtrlAdmin", function ($scope, $http) {
             return;
         }
         getUser(page);
+    };
+    $scope.changePageSanpham = function (page) {
+        if (page === "..." || page < 1 || page > $scope.pagination.last_page) {
+            return;
+        }
+        loadSanpham(page);
     };
     $scope.editDanhmuc = function (danhmuc) {
         $scope.selectedDanhmuc = JSON.parse(JSON.stringify(danhmuc)); // Sao chép thông tin người dùng để chỉnh sửa
@@ -544,8 +684,203 @@ app.controller("CtrlAdmin", function ($scope, $http) {
         }
     };
 
+    //sanpham
+    $scope.addSanpham = async function () {
+        try {
+            const response = await $http.post(
+                $scope.urlAddSanpham,
+                $scope.sanphams,
+                config
+            );
+
+            console.log(response.data);
+
+            // ✅ Hiển thị thông báo thành công bằng SweetAlert2
+            Swal.fire({
+                icon: "success",
+                title: "Thành công!",
+                text: "Sản phẩm đã được thêm thành công!",
+                timer: 2000,
+                showConfirmButton: false,
+            });
+
+            // 🔄 Reset dữ liệu chỉ khi thành công
+            $scope.sanphams = {};
+            $scope.errors = {};
+            loadSanpham();
+            $scope.$applyAsync();
+        } catch (error) {
+            console.error("Lỗi khi thêm sản phẩm:", error);
+
+            if (error.status === 422) {
+                $scope.errors = error.data.error;
+                console.log($scope.errors);
+            }
+
+            // ❌ Hiển thị thông báo lỗi bằng SweetAlert2
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Thêm không thành công, vui lòng thử lại.",
+                confirmButtonText: "OK",
+            });
+        } finally {
+            // 🔄 Dọn dẹp trạng thái hoặc cập nhật lại giao diện nếu cần
+            $scope.$applyAsync();
+        }
+    };
+
+    const loadSanpham = async function (page = 1) {
+        try {
+            const response = await $http.get(
+                $scope.urlLoadSanpham + "?page=" + page
+            );
+
+            // Cập nhật dữ liệu danh mục
+            $scope.loadSanphams = response.data.data.data;
+            $scope.pagination = {
+                current_page: response.data.data.current_page,
+                last_page: response.data.data.last_page,
+                total: response.data.data.total,
+                per_page: response.data.data.per_page,
+            };
+
+            // ✅ Cập nhật UI ngay lập tức
+            $scope.$applyAsync();
+
+            console.log($scope.loadSanphams);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    $scope.editSanpham = async function (sanpham) {
+        $scope.selectedSanpham = JSON.parse(JSON.stringify(sanpham)); // Sao chép thông tin người dùng để chỉnh sửa
+        $scope.selectedSanpham.gia_goc = Number(sanpham.gia_goc) || 0;
+        $scope.selectedSanpham.gia_km_phan_tram =
+            Number(sanpham.gia_km_phan_tram) || 0;
+        console.log($scope.selectedSanpham);
+        $(".modal").modal("hide"); // Đóng tất cả modal trước khi mở
+        $("#editSanphamModal").modal("show"); // Hiển thị modal chỉnh sửa danh mục
+    };
+
+    $scope.updateSanpham = async function () {
+        let dataToSend = angular.copy($scope.selectedSanpham);
+        delete dataToSend.anhsp_preview; // Xóa dữ liệu không cần thiết trước khi gửi
+
+        try {
+            const response = await $http.put(
+                $scope.urlUpdateSanpham + "/" + $scope.selectedSanpham.id,
+                dataToSend,
+                config
+            );
+            console.log(response);
+
+            // ✅ Cập nhật UI ngay lập tức
+            $scope.$applyAsync();
+
+            // ✅ Cập nhật danh sách sản phẩm
+            loadSanpham();
+
+            // ✅ Đóng modal
+            $("#editSanphamModal").modal("hide");
+
+            // ✅ Hiển thị thông báo với SweetAlert2
+            Swal.fire({
+                icon: "success",
+                title: "Thành công!",
+                text: "Sản phẩm đã được cập nhật thành công.",
+                showConfirmButton: false,
+                timer: 2000, // Tự động tắt sau 2 giây
+            });
+        } catch (error) {
+            console.log(error);
+
+            // ❌ Hiển thị thông báo lỗi
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Có lỗi xảy ra khi cập nhật sản phẩm.",
+                confirmButtonText: "OK",
+            });
+        }
+    };
+
+    $scope.deleteSanpham = async function (id) {
+        Swal.fire({
+            title: "Bạn có chắc chắn muốn xóa?",
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xóa ngay",
+            cancelButtonText: "Hủy",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await $http.delete(
+                        $scope.urlDeleteSanpham + "/" + id,
+                        config
+                    );
+                    console.log(response);
+
+                    // ✅ Cập nhật UI ngay lập tức
+                    $scope.$applyAsync();
+
+                    // ✅ Cập nhật danh sách sản phẩm
+                    loadSanpham();
+
+                    // ✅ Hiển thị thông báo thành công
+                    Swal.fire({
+                        icon: "success",
+                        title: "Đã xóa!",
+                        text: "Sản phẩm đã được xóa thành công.",
+                        showConfirmButton: false,
+                        timer: 2000,
+                    });
+                } catch (error) {
+                    console.log(error);
+
+                    // ❌ Hiển thị thông báo lỗi
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi!",
+                        text: "Có lỗi xảy ra khi xóa sản phẩm.",
+                        confirmButtonText: "OK",
+                    });
+                }
+            }
+        });
+    };
+
+    const loadSize = async function () {
+        try {
+            const response = await $http.get($scope.urlloadSize);
+            $scope.loadSize = response.data.sizes;
+            console.log("size:", $scope.loadSize);
+            $scope.$applyAsync();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const loadColor = async function () {
+        try {
+            const response = await $http.get($scope.urlloadColor);
+            $scope.loadColor = response.data.colors;
+            console.log("color:", $scope.loadColor);
+            $scope.$applyAsync();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     // Cập nhật danh mục
     loadParent();
     getDanhmuc(); // Lấy danh sách danh mục ngay khi ứng dụng bắt đầu
     getUser();
+    loadSanpham();
+    loadSize();
+    loadColor();
 });
