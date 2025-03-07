@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\size_color\MixController;
+use App\Http\Controllers\api\ApiCartController;
 use App\Http\Controllers\api\ApiDanhmucController;
 use App\Http\Controllers\api\ApiSanphamController;
 use App\Http\Controllers\api\ApiUserController;
@@ -45,6 +46,10 @@ Route::get('/load/color', [MixController::class, 'loadColor']);
 
 Route::post('/add/san-pham', [ApiSanphamController::class, 'addSanpham'])->name('addSanpham');
 Route::get('/load/san-pham', [ApiSanphamController::class, 'loadSanpham'])->name('loadSanpham');
+Route::get('/load/san-pham/{id}', [ApiSanphamController::class, 'loadSanphamID'])->name('loadSanphamID');
 Route::get('/load/san-pham-home', [ApiSanphamController::class, 'loadSanphamHome'])->name('loadSanphamHome');
+Route::get('/load/san-pham-danhmuc/{id}', [ApiSanphamController::class, 'loadSanphamDanhmuc'])->name('loadSanphamDanhmuc');
 Route::put('/update/san-pham/{id}', [ApiSanphamController::class, 'updateSanpham'])->name('updateSanpham');
 Route::delete('/delete/san-pham/{id}', [ApiSanphamController::class, 'deleteSanpham'])->name('deleteSanpham');
+
+Route::post('/add/cart',[ApiCartController::class,'addTocart']);

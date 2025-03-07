@@ -93,11 +93,27 @@ class ApiSanphamController extends Controller
         $sanpham = Sanpham::paginate(10);
         return response()->json(['data' => $sanpham], 200);
     }
-    public function loadSanphamHome()
+    public function loadSanphamID($id)
     {
-        $sanpham = Sanpham::with(['anhs','color'])->paginate(4);
+        $sanpham = Sanpham::with(['anhs', 'color'])->where('id', $id)->firstOrFail();
         return response()->json(['data' => $sanpham], 200);
     }
+    public function loadSanphamHome()
+    {
+        $sanpham = Sanpham::with(['anhs', 'color'])->paginate(4);
+        return response()->json(['data' => $sanpham], 200);
+    }
+
+    public function loadSanphamDanhmuc($id)
+    {
+        $sanpham = Sanpham::with(['anhs', 'color'])
+            ->where('danh_muc_id', $id)
+            ->limit(4) // Lấy 4 sản phẩm
+            ->get();
+
+        return response()->json(['data' => $sanpham], 200);
+    }
+
 
     public function updateSanpham(Request $request, $id)
     {

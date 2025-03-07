@@ -143,64 +143,6 @@ function closeCart() {
     document.getElementById("cartOverlay").classList.remove("show");
 }
 
-function addToCart(productName) {
-    if (!productData[productName]) {
-        console.error("Sản phẩm không tồn tại!");
-        return;
-    }
-
-    let existingItem = cart.find((item) => item.name === productName);
-
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        let product = productData[productName];
-
-        cart.push({
-            name: productName,
-            image: product.image,
-            price: product.price,
-            quantity: 1,
-        });
-    }
-
-    updateCartUI();
-}
-
-function updateCartUI() {
-    let cartList = document.getElementById("cartItems");
-    let cartCount = document.getElementById("cartCount");
-
-    cartList.innerHTML = "";
-    cartCount.innerText = cart.length;
-
-    // Hiển thị số lượng nếu có sản phẩm
-    cartCount.classList.toggle("show", cart.length > 0);
-
-    if (cart.length === 0) {
-        cartList.innerHTML = "<p>Giỏ hàng trống</p>";
-        return;
-    }
-
-    cart.forEach((item, index) => {
-        let li = document.createElement("li");
-        li.classList.add("cart-item");
-
-        li.innerHTML = `
-            <img src="${item.image}" alt="${item.name}">
-            <span>${item.name} - ${item.price} (x${item.quantity})</span>
-            <span class="remove-item" onclick="removeFromCart(${index})">X</span>
-        `;
-
-        cartList.appendChild(li);
-    });
-}
-
-function removeFromCart(index) {
-    cart.splice(index, 1);
-    updateCartUI();
-}
-
 function checkout() {
     Swal.fire({
         title: "Thanh toán",

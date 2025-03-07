@@ -9,7 +9,7 @@ class Chitietgiohang extends Model
 {
     use HasFactory;
     protected $table = 'chitietgiohangs';
-    protected $fillable = ['gio_hang_id', 'san_pham_id', 'soluong', 'tong'];
+    protected $fillable = ['gio_hang_id', 'san_pham_id', 'size_id', 'so_luong', 'gia'];
 
     public function giohang()
     {

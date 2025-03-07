@@ -75,8 +75,9 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::get('/index/color', [MixController::class, 'indexColor'])->name('admin.color.index');
         Route::post('/add/color', [MixController::class, 'addColor'])->name('admin.color.add');
         Route::post('/update/{id}', [MixController::class, 'updateColor'])->name('admin.color.update');
-        Route::get('/delete/{id}',[MixController::class,'deleteColor'])->name('admin.color.delete');
+        Route::get('/delete/{id}', [MixController::class, 'deleteColor'])->name('admin.color.delete');
     });
 });
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/detail/{id}', [HomeController::class, 'detail'])->name('detail');

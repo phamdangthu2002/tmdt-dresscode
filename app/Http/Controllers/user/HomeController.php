@@ -9,6 +9,11 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('user.trang-chu.layout');
+        return view('user.san-pham.index');
+    }
+
+    public function detail()
+    {
+        return view('user.san-pham.detail');
     }
 }

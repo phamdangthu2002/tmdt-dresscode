@@ -12,20 +12,11 @@
 </head>
 
 <body ng-controller="CtrlTrangchu">
+    <input type="hidden" id="user_id" value="{{ Auth::check() ? Auth::user()->id : null }}">
     <!-- Header -->
     @include('user.trang-chu.header')
-    <!-- Hero Section -->
-    @include('user.trang-chu.hero')
-    <!-- Categories Section -->
-    @include('user.trang-chu.cate')
-    <!-- Featured Products -->
-    @include('user.san-pham.index')
-    <!-- Collections Banner -->
-    @include('user.trang-chu.banner')
-    <!-- Promotions -->
-    @include('user.trang-chu.promotion')
-    <!-- Customer Reviews -->
-    @include('user.trang-chu.review')
+    <!-- Content -->
+    @yield('content')
     <!-- Footer -->
     <!-- Newsletter -->
     @include('user.trang-chu.footer')
@@ -34,7 +25,11 @@
     <script src="{{ asset('assets/js/trangchu.js') }}"></script>
     <script src="{{ asset('assets/vendor/sweetalert2@11.js') }}"></script>
     <script src="{{ asset('assets/vendor/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+        var app = angular.module("trangchu", []);
+    </script>
     <script src="{{ asset('assets/js/trangchuangular.js') }}"></script>
+    {{-- <script src="{{ asset('assets/js/sanpham.js') }}"></script> --}}
 </body>
 
 </html>

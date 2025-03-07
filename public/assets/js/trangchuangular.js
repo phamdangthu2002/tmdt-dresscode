@@ -1,4 +1,3 @@
-var app = angular.module("trangchu", []);
 app.controller("CtrlTrangchu", function ($scope, $http) {
     var config = {
         headers: {
@@ -6,26 +5,35 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
             Authorization: "Bearer YOUR_ACCESS_TOKEN", // Nếu API yêu cầu token
         },
     };
+    const user_id = document.getElementById("user_id").value;
+    console.log("userid:", user_id);
+
     $scope.errors = {};
     $scope.sanphams = [];
-    $scope.deltail = [];
+    $scope.detail = [];
     $scope.loadSize = [];
     $scope.mauSac = {};
     $scope.danhmucs = [];
+    $scope.danh_muc_id = [];
+    $scope.selectedSize = null; // Khởi tạo biến này để tránh lỗi undefined
 
     $scope.urlloadSize = "/api/load/size";
     $scope.urlloadDanhmucHome = "/api/load/danh-muc-home";
+    $scope.urlloadSanphamDanhmuc = "/api/load/san-pham-danhmuc";
+    $scope.urladdTocart = "/api/add/cart";
+    $scope.urldeTail = "/detail";
+    $scope.urlloadSanpham = "/api/load/san-pham";
 
-    $scope.selectedSize = {}; // Khởi tạo giá trị size rỗng
     $scope.quantity = 1; // Giá trị mặc định
+    $scope.size = [];
 
     $scope.changeImage = function (url) {
-        $scope.deltail.anhsp = url;
+        $scope.detail.anhsp = url;
     };
 
     $scope.selectSize = function (size) {
-        $scope.selectedSize = size; // Gán giá trị size được chọn
-        console.log("Size đã chọn:", size);
+        console.log("Size đã chọn:", size); // Debug để kiểm tra dữ liệu
+        $scope.selectedSize = size.id;
     };
 
     $scope.increaseQuantity = function () {
@@ -206,33 +214,15 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
         const overlay = document.getElementById("quickViewOverlay");
         overlay.classList.add("active");
         document.body.style.overflow = "hidden";
-        $scope.deltail = JSON.parse(JSON.stringify(sanpham));
+        $scope.detail = JSON.parse(JSON.stringify(sanpham));
         // Lấy giá trị màu sắc khi cần
-        $scope.mauSac = $scope.deltail.color
-            ? $scope.deltail.color.name
+        $scope.mauSac = $scope.detail.color
+            ? $scope.detail.color.name
             : "Không có màu";
         // Kiểm tra trong console
         console.log("Màu sắc sản phẩm:", $scope.mauSac);
     };
-    // Đóng popup Xem Nhanh
-    document
-        .querySelector(".quick-view-close")
-        .addEventListener("click", function () {
-            document
-                .getElementById("quickViewOverlay")
-                .classList.remove("active");
-            document.body.style.overflow = "auto"; // Cho phép cuộn trang
-        });
 
-    // Đóng popup khi click vào overlay
-    document
-        .getElementById("quickViewOverlay")
-        .addEventListener("click", function (e) {
-            if (e.target === this) {
-                this.classList.remove("active");
-                document.body.style.overflow = "auto";
-            }
-        });
     const loadSize = async function () {
         try {
             const response = await $http.get($scope.urlloadSize);
@@ -257,7 +247,171 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
         }
     };
 
+    $scope.addTocart = function (sanpham) {
+        if (!user_id) {
+            Swal.fire({
+                icon: "warning",
+                title: "Lưu ý!",
+                text: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!",
+            });
+            return;
+        }
+
+        $scope.cart = {
+            user_id: user_id, // Đảm bảo user_id được khai báo
+            san_pham_id: sanpham.id,
+            so_luong: 1,
+            size_id: 1, // Cần chọn size từ giao diện
+            gia_goc: sanpham.gia_goc, // API yêu cầu key này
+        };
+
+        $http.post($scope.urladdTocart, $scope.cart).then(
+            function (response) {
+                if (response.data.status === "success") {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Thành công!",
+                        text: "Sản phẩm đã được thêm vào giỏ hàng.",
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi!",
+                        text:
+                            response.data.message ||
+                            "Không thể thêm vào giỏ hàng.",
+                    });
+                }
+            },
+            function (error) {
+                console.log(error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Lỗi kết nối!",
+                    text: "Không thể kết nối đến server.",
+                });
+            }
+        );
+
+        console.log($scope.cart);
+    };
+
+    $scope.closeQuickView = function () {
+        document.getElementById("quickViewOverlay").classList.remove("active");
+    };
+
+    // Hàm tăng số lượng
+    $scope.increaseQuantity = function () {
+        if (!$scope.cart) $scope.cart = {};
+        $scope.cart.so_luong = ($scope.cart.so_luong || 1) + 1;
+    };
+
+    // Hàm giảm số lượng
+    $scope.decreaseQuantity = function () {
+        if (!$scope.cart) $scope.cart = {};
+        if ($scope.cart.so_luong > 1) {
+            $scope.cart.so_luong -= 1;
+        }
+    };
+    // Hàm thêm vào giỏ hàng
+    $scope.addToCart = function (detail) {
+        if (!user_id) {
+            Swal.fire({
+                icon: "error",
+                title: "Lỗi!",
+                text: "Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!",
+            });
+            return;
+        }
+
+        if (!$scope.selectedSize) {
+            Swal.fire({
+                icon: "warning",
+                title: "Chưa chọn kích thước!",
+                text: "Vui lòng chọn size trước khi thêm vào giỏ hàng.",
+            });
+            return;
+        }
+
+        $scope.cart = {
+            user_id: user_id,
+            san_pham_id: detail.id,
+            so_luong: $scope.cart?.so_luong || 1,
+            size_id: $scope.selectedSize,
+            gia_goc: detail.gia_goc,
+        };
+
+        console.log("Dữ liệu gửi đi:", $scope.cart);
+
+        $http.post($scope.urladdTocart, $scope.cart).then(
+            function (response) {
+                if (response.data.status === "success") {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Thành công!",
+                        text: "Sản phẩm đã được thêm vào giỏ hàng.",
+                        timer: 1500,
+                        showConfirmButton: false,
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Lỗi!",
+                        text:
+                            response.data.message ||
+                            "Không thể thêm vào giỏ hàng.",
+                    });
+                }
+            },
+            function (error) {
+                console.log(error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Lỗi kết nối!",
+                    text: "Không thể kết nối đến server.",
+                });
+            }
+        );
+    };
+
+    $scope.sanPham = function (sanpham) {
+        localStorage.setItem("san_pham", JSON.stringify(sanpham));
+        setTimeout(function () {
+            window.location.href = $scope.urldeTail + "/" + sanpham.id;
+        }, 100); // Đợi 100ms để đảm bảo dữ liệu lưu xong
+    };
+
+    // Hàm lấy sản phẩm từ localStorage khi trang tải lại
+    const chitiet = function () {
+        var sanPham = JSON.parse(localStorage.getItem("san_pham"));
+        if (sanPham) {
+            $scope.detail = sanPham;
+            console.log("Lấy sản phẩm từ localStorage:", sanPham);
+        } else {
+            console.error("Không tìm thấy sản phẩm trong localStorage!");
+        }
+    };
+
+    const loadSanphamDanhmuc = async function () {
+        var sanPham = JSON.parse(localStorage.getItem("san_pham"));
+        $scope.danh_muc_id = sanPham.danh_muc_id;
+        try {
+            var response = await $http.get(
+                "/api/load/san-pham-danhmuc/" + $scope.danh_muc_id
+            );
+            $scope.sanphams = response.data.data;
+            console.log($scope.sanphams); // Kiểm tra dữ liệu
+            $scope.$apply(); // Cập nhật giao diện
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     loadSanpham();
     loadSize();
     loadDanhmuc();
+    chitiet();
+    loadSanphamDanhmuc();
 });
