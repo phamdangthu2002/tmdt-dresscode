@@ -17,6 +17,7 @@ class ApiCartController extends Controller
             $san_pham_id = $request->san_pham_id;
             $so_luong = $request->so_luong;
             $size_id = $request->size_id;
+            $color_id = $request->color_id;
             $gia = $request->gia_goc;
 
             // Kiểm tra xem user đã có giỏ hàng chưa
@@ -35,6 +36,7 @@ class ApiCartController extends Controller
                 'gio_hang_id' => $giohang->id,
                 'san_pham_id' => $san_pham_id,
                 'size_id' => $size_id,
+                'color_id' => $color_id,
             ])->first();
 
             if ($ctgh) {
@@ -48,6 +50,7 @@ class ApiCartController extends Controller
                     'san_pham_id' => $san_pham_id,
                     'so_luong' => $so_luong,
                     'size_id' => $size_id,
+                    'color_id' => $color_id,
                     'gia' => $gia,
                 ]);
             }
@@ -62,6 +65,38 @@ class ApiCartController extends Controller
                 'message' => 'Lỗi khi thêm vào giỏ hàng: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    public function getGiohang($id)
+    {
+        $giohang = Giohang::where('user_id', $id)->first();
+        if (!$giohang) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không tìm thấy giỏ hàng',
+            ], 404);
+        }
+        $chitietgiohang = Chitietgiohang::where('gio_hang_id', $giohang->id)->with(['sanpham', 'size', 'color'])->get();
+        return response()->json([
+            'status' => 'success',
+            'data' => $chitietgiohang,
+        ]);
+    }
+
+    public function countCart($id)
+    {
+        $giohang = Giohang::where('user_id', $id)->first();
+        if (!$giohang) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không tìm thấy giỏ hàng',
+            ], 404);
+        }
+        $chitietgiohang = Chitietgiohang::where('gio_hang_id', $giohang->id)->count();
+        return response()->json([
+            'status' => 'success',
+            'data' => $chitietgiohang,
+        ]);
     }
 
 }

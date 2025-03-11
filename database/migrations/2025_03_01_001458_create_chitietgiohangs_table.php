@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->foreignId('san_pham_id')->constrained('sanphams')->onDelete('cascade');
             $table->integer('so_luong'); // Mặc định số lượng là 1
             $table->integer('size_id'); // Size sản phẩm
+            $table->integer('color_id'); // Màu sắc sản phẩm
             $table->decimal('gia', 15, 2); // Giá sản phẩm tại thời điểm mua
             $table->timestamps();
         });

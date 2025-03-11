@@ -49,7 +49,11 @@ Route::get('/load/san-pham', [ApiSanphamController::class, 'loadSanpham'])->name
 Route::get('/load/san-pham/{id}', [ApiSanphamController::class, 'loadSanphamID'])->name('loadSanphamID');
 Route::get('/load/san-pham-home', [ApiSanphamController::class, 'loadSanphamHome'])->name('loadSanphamHome');
 Route::get('/load/san-pham-danhmuc/{id}', [ApiSanphamController::class, 'loadSanphamDanhmuc'])->name('loadSanphamDanhmuc');
+Route::get('/load/san-pham-random', [ApiSanphamController::class, 'loadSanphamRandom'])->name('loadSanphamRandom');
+Route::get('/load/san-pham/search/{name}', [ApiSanphamController::class, 'loadSanphamSearch'])->name('loadSanphamSearch');
 Route::put('/update/san-pham/{id}', [ApiSanphamController::class, 'updateSanpham'])->name('updateSanpham');
 Route::delete('/delete/san-pham/{id}', [ApiSanphamController::class, 'deleteSanpham'])->name('deleteSanpham');
 
-Route::post('/add/cart',[ApiCartController::class,'addTocart']);
+Route::post('/add/cart', [ApiCartController::class, 'addTocart']);
+Route::get('/load/gio-hang/{id}', [ApiCartController::class, 'getGiohang']);
+Route::get('/count-cart/{id}', [ApiCartController::class, 'countCart']);

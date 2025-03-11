@@ -29,9 +29,9 @@
                                 <button class="btn btn-sm btn-light rounded-circle mx-1" ng-click="showQuickView(sanpham)">
                                     <i class="far fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-light rounded-circle mx-1" ng-click="addTocart(sanpham)">
+                                {{-- <button class="btn btn-sm btn-light rounded-circle mx-1" ng-click="addTocart(sanpham)">
                                     <i class="fas fa-shopping-bag"></i>
-                                </button>
+                                </button> --}}
                             </div>
                         </div>
                         <div class="p-3">
@@ -45,7 +45,7 @@
                                     <i class="far fa-star"></i>
                                 </div>
                             </div>
-                            <a ng-click="sanPham(sanpham)">
+                            <a ng-click="sanPham(sanpham)" style="cursor: pointer;">
                                 <h5 class="product-title">@{{ sanpham.tensp }}</h5>
                             </a>
                             <p class="mb-0 text-muted small">@{{ sanpham.mo_ta }}</p>
@@ -106,7 +106,7 @@
                                 <button class="quantity-btn increase" ng-click="increaseQuantity()">+</button>
                             </div>
                         </div>
-                        <button class="btn-add-cart mt-4" ng-click="addToCart(detail)">THÊM VÀO GIỎ</button>
+                        <button class="btn-add-cart btn btn-outline-dark mt-4" ng-click="addToCart(detail)">THÊM VÀO GIỎ</button>
                         <div class="social-icons mt-3">
                             <a href="#" class="facebook"><i class="fab fa-facebook-f"></i></a>
                             <a href="#" class="messenger"><i class="fab fa-facebook-messenger"></i></a>
@@ -114,7 +114,7 @@
                             <a href="#" class="pinterest"><i class="fab fa-pinterest-p"></i></a>
                             <a href="#" class="link"><i class="fas fa-link"></i></a>
                         </div>
-                        <a href="#" class="view-details mt-3">Xem chi tiết sản phẩm »</a>
+                        <a ng-click="sanPham(detail)" class="view-details mt-3">Xem chi tiết sản phẩm »</a>
                     </div>
                 </div>
             </div>

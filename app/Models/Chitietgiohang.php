@@ -9,7 +9,7 @@ class Chitietgiohang extends Model
 {
     use HasFactory;
     protected $table = 'chitietgiohangs';
-    protected $fillable = ['gio_hang_id', 'san_pham_id', 'size_id', 'so_luong', 'gia'];
+    protected $fillable = ['gio_hang_id', 'san_pham_id', 'size_id', 'color_id', 'so_luong', 'gia'];
 
     public function giohang()
     {
@@ -23,6 +23,11 @@ class Chitietgiohang extends Model
     public function size()
     {
         return $this->belongsTo(Size::class, 'size_id');
+    }
+
+    public function color()
+    {
+        return $this->belongsTo(Color::class, 'color_id');
     }
 
 }

@@ -23,8 +23,11 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
     $scope.urladdTocart = "/api/add/cart";
     $scope.urldeTail = "/detail";
     $scope.urlloadSanpham = "/api/load/san-pham";
+    $scope.urlloadGiohang = "/api/load/gio-hang";
+    $scope.urlgetCountcart = "/api/count-cart";
+    $scope.urlloadSanphamRandom = "/api/load/san-pham-random";
 
-    $scope.quantity = 1; // Giá trị mặc định
+    $scope.quantity = []; // Giá trị mặc định
     $scope.size = [];
 
     $scope.changeImage = function (url) {
@@ -36,13 +39,35 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
         $scope.selectedSize = size.id;
     };
 
-    $scope.increaseQuantity = function () {
+    $scope.cong = function () {
         $scope.quantity++; // Tăng số lượng
+        Swal.fire({
+            icon: "success",
+            title: "Đã tăng số lượng!",
+            text: "Số lượng sản phẩm hiện tại: " + $scope.quantity,
+            timer: 1000,
+            showConfirmButton: false,
+        });
     };
 
-    $scope.decreaseQuantity = function () {
+    $scope.tru = function () {
         if ($scope.quantity > 1) {
             $scope.quantity--; // Giảm số lượng nhưng không nhỏ hơn 1
+            Swal.fire({
+                icon: "success",
+                title: "Đã giảm số lượng!",
+                text: "Số lượng sản phẩm hiện tại: " + $scope.quantity,
+                timer: 1000,
+                showConfirmButton: false,
+            });
+        } else {
+            Swal.fire({
+                icon: "warning",
+                title: "Số lượng tối thiểu là 1!",
+                text: "Không thể giảm số lượng thấp hơn 1.",
+                timer: 1500,
+                showConfirmButton: false,
+            });
         }
     };
 
@@ -213,7 +238,6 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
     $scope.showQuickView = function (sanpham) {
         const overlay = document.getElementById("quickViewOverlay");
         overlay.classList.add("active");
-        document.body.style.overflow = "hidden";
         $scope.detail = JSON.parse(JSON.stringify(sanpham));
         // Lấy giá trị màu sắc khi cần
         $scope.mauSac = $scope.detail.color
@@ -263,6 +287,7 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
             so_luong: 1,
             size_id: 1, // Cần chọn size từ giao diện
             gia_goc: sanpham.gia_goc, // API yêu cầu key này
+            color_id: 1, // Cần chọn màu từ giao diện
         };
 
         $http.post($scope.urladdTocart, $scope.cart).then(
@@ -302,19 +327,37 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
         document.getElementById("quickViewOverlay").classList.remove("active");
     };
 
-    // Hàm tăng số lượng
     $scope.increaseQuantity = function () {
         if (!$scope.cart) $scope.cart = {};
-        $scope.cart.so_luong = ($scope.cart.so_luong || 1) + 1;
+
+        if ($scope.cart.so_luong >= 10) {
+            Swal.fire({
+                icon: "warning",
+                title: "Giới hạn tối đa!",
+                text: "Bạn chỉ có thể mua tối đa 10 sản phẩm.",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+        } else {
+            $scope.cart.so_luong = ($scope.cart.so_luong || 1) + 1;
+        }
     };
 
-    // Hàm giảm số lượng
     $scope.decreaseQuantity = function () {
         if (!$scope.cart) $scope.cart = {};
         if ($scope.cart.so_luong > 1) {
             $scope.cart.so_luong -= 1;
+        } else {
+            Swal.fire({
+                icon: "warning",
+                title: "Số lượng tối thiểu là 1!",
+                text: "Không thể giảm thêm.",
+                timer: 1500,
+                showConfirmButton: false,
+            });
         }
     };
+
     // Hàm thêm vào giỏ hàng
     $scope.addToCart = function (detail) {
         if (!user_id) {
@@ -340,6 +383,7 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
             san_pham_id: detail.id,
             so_luong: $scope.cart?.so_luong || 1,
             size_id: $scope.selectedSize,
+            color_id: detail.color.id,
             gia_goc: detail.gia_goc,
         };
 
@@ -355,6 +399,8 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
                         timer: 1500,
                         showConfirmButton: false,
                     });
+                    countCart();
+                    getGiohang();
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -409,9 +455,58 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
         }
     };
 
+    const getGiohang = async function () {
+        try {
+            var response = await $http.get(
+                $scope.urlloadGiohang + "/" + user_id
+            );
+            $scope.giohangs = response.data.data;
+
+            // Tính tổng giá từ danh sách sản phẩm
+            $scope.total = $scope.giohangs.reduce(
+                (sum, item) => sum + item.gia * item.so_luong,
+                0
+            );
+
+            console.log("Giỏ hàng:", $scope.giohangs); // Kiểm tra dữ liệu
+            console.log("Tổng giá:", $scope.total);
+
+            $scope.$apply(); // Cập nhật giao diện nếu cần
+        } catch (error) {
+            console.log("Lỗi khi tải giỏ hàng:", error);
+        }
+    };
+
+    const countCart = async function () {
+        try {
+            var response = await $http.get(
+                $scope.urlgetCountcart + "/" + user_id
+            );
+            $scope.countCart = response.data.data;
+            console.log("Số lượng giỏ hàng:", $scope.countCart);
+            $scope.$apply(); // Cập nhật giao diện
+        } catch (error) {
+            console.error("Lỗi khi lấy số lượng giỏ hàng:", error);
+        }
+    };
+
+    const loadSanphamRandom = async function () {
+        try {
+            var response = await $http.get($scope.urlloadSanphamRandom);
+            $scope.sanphamRandoms = response.data.data;
+            console.log("San pham random:", $scope.sanphamRandoms);
+            $scope.$apply();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    loadDanhmuc();
     loadSanpham();
     loadSize();
-    loadDanhmuc();
     chitiet();
     loadSanphamDanhmuc();
+    getGiohang();
+    countCart();
+    loadSanphamRandom();
 });

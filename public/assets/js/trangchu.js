@@ -45,7 +45,6 @@ function addToWishlist(productName) {
     });
 }
 
-
 function subscribeNewsletter() {
     Swal.fire({
         title: "Chức năng đang phát triển",
@@ -85,88 +84,6 @@ document
         document.getElementById("register-form").style.display = "none";
         document.getElementById("login-form").style.display = "block";
     });
-
-let cart = [];
-
-// Dữ liệu mẫu cho sản phẩm
-const productData = {
-    "Áo sơ mi nam": {
-        image: "https://placehold.co/300x300",
-        price: "550.000₫",
-        description: "Chất liệu cao cấp, kiểu dáng hiện đại",
-        reviews: 4,
-        sizes: ["S", "M", "L", "XL"],
-        colors: ["Đen", "Trắng", "Xanh"],
-        materials: ["Cotton", "Polyester"],
-        quantity: ["1", "2", "3", "4", "5"],
-    },
-    "Váy liền thân": {
-        image: "https://placehold.co/300x300",
-        price: "680.000₫",
-        description: "Phong cách thanh lịch, thích hợp đi làm",
-        reviews: 4.5,
-        sizes: ["S", "M", "L"],
-        colors: ["Đỏ", "Xanh", "Vàng"],
-        materials: ["Polyester", "Silk"],
-        quantity: ["1", "2", "3", "4", "5"],
-    },
-    "Quần jeans nam": {
-        image: "https://placehold.co/300x300",
-        price: "750.000₫",
-        description: "Denim cao cấp, form slim fit",
-        reviews: 5,
-        sizes: ["M", "L", "XL"],
-        colors: ["Xanh", "Đen"],
-        materials: ["Denim", "Cotton"],
-        quantity: ["1", "2", "3", "4", "5"],
-    },
-    "Áo khoác bomber": {
-        image: "https://placehold.co/300x300",
-        price: "950.000₫",
-        description: "Thiết kế cá tính, giữ ấm tốt",
-        reviews: 4.5,
-        sizes: ["S", "M", "L", "XL"],
-        colors: ["Đen", "Xám", "Xanh"],
-        materials: ["Polyester", "Nylon"],
-        quantity: ["1", "2", "3", "4", "5"],
-    },
-};
-// Hiển thị giỏ hàng (popup)
-function showCart() {
-    document.getElementById("cartPopup").classList.add("show");
-    document.getElementById("cartOverlay").classList.add("show");
-}
-
-// Đóng giỏ hàng (popup)
-function closeCart() {
-    document.getElementById("cartPopup").classList.remove("show");
-    document.getElementById("cartOverlay").classList.remove("show");
-}
-
-function checkout() {
-    Swal.fire({
-        title: "Thanh toán",
-        text: "Bạn sẽ được chuyển đến trang thanh toán.",
-        icon: "success",
-        confirmButtonText: "OK",
-    }).then(() => {
-        // Chuyển đến trang thanh toán
-        window.location.href = "/checkout";
-    });
-}
-
-function buyNow(productName) {
-    const selectedSize = document.getElementById("quickViewModalSizes").value;
-    Swal.fire({
-        title: "Mua ngay!",
-        text: `${productName} (Size: ${selectedSize}) đã được thêm vào giỏ hàng. Bạn sẽ được chuyển đến trang thanh toán.`,
-        icon: "success",
-        confirmButtonText: "OK",
-    }).then(() => {
-        // Chuyển đến trang thanh toán
-        window.location.href = "/checkout";
-    });
-}
 
 function showCategoryProducts(categoryName) {
     Swal.fire({

@@ -190,7 +190,7 @@
                     </div>
                 </div>
                 <button class="btn-add-cart btn btn-outline-dark mt-4" ng-click="addToCart(detail)">THÊM VÀO GIỎ</button>
-                <button class="btn-add-cart btn btn-dark mt-4" ng-click="#">MUA NGAY</button>
+                <button class="btn-add-cart btn btn-dark mt-4" ng-click="buy()">MUA NGAY</button>
                 <div class="info-footer mt-5">
                     <div class="product-subinfo">
                         <div class="row">

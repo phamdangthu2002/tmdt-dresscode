@@ -114,6 +114,20 @@ class ApiSanphamController extends Controller
         return response()->json(['data' => $sanpham], 200);
     }
 
+    public function loadSanphamRandom()
+    {
+        // Lấy 4 sản phẩm ngẫu nhiên
+        $sanpham = Sanpham::with(['anhs', 'color'])->inRandomOrder()->limit(4)->get();
+
+        // Kiểm tra nếu không có sản phẩm nào
+        if ($sanpham->isEmpty()) {
+            return response()->json(['message' => 'Không có sản phẩm nào'], 404);
+        }
+
+        return response()->json(['data' => $sanpham], 200);
+    }
+
+
 
     public function updateSanpham(Request $request, $id)
     {
