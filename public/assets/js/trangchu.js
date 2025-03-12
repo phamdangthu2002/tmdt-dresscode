@@ -7,26 +7,6 @@ function showUnderConstruction() {
     });
 }
 
-function showSearch() {
-    Swal.fire({
-        title: "Tìm kiếm",
-        input: "text",
-        inputPlaceholder: "Nhập từ khóa tìm kiếm...",
-        showCancelButton: true,
-        confirmButtonText: "Tìm kiếm",
-        cancelButtonText: "Hủy",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: "Kết quả tìm kiếm",
-                text: `Bạn đã tìm kiếm: ${result.value}`,
-                icon: "success",
-                confirmButtonText: "OK",
-            });
-        }
-    });
-}
-
 function showWishlist() {
     Swal.fire({
         title: "Danh sách yêu thích",

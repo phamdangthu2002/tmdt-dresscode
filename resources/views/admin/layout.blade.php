@@ -63,6 +63,10 @@
             class="{{ request()->routeIs('admin.color.index') ? 'active' : '' }}">
             <i class='bx bx-palette'></i><span>Color</span>
         </a>
+        <a href="{{ route('admin.cart.index') }}"
+            class="{{ request()->routeIs('admin.cart.index') ? 'active' : '' }}">
+            <i class='bx bx-cart'></i><span>Cart</span>
+        </a>
         <a href="#" ng-click="logout()">
             <i class="bx bx-log-out"></i><span>Logout</span>
         </a>

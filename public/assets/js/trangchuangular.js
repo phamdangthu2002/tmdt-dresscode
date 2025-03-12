@@ -16,6 +16,7 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
     $scope.danhmucs = [];
     $scope.danh_muc_id = [];
     $scope.selectedSize = null; // Khởi tạo biến này để tránh lỗi undefined
+    $scope.searchs = [];
 
     $scope.urlloadSize = "/api/load/size";
     $scope.urlloadDanhmucHome = "/api/load/danh-muc-home";
@@ -26,6 +27,8 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
     $scope.urlloadGiohang = "/api/load/gio-hang";
     $scope.urlgetCountcart = "/api/count-cart";
     $scope.urlloadSanphamRandom = "/api/load/san-pham-random";
+    $scope.urlSearch = "/api/load/san-pham/search";
+    $scope.urlloadDanhmucID = "/api/load/san-pham/danh-muc";
 
     $scope.quantity = []; // Giá trị mặc định
     $scope.size = [];
@@ -460,20 +463,28 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
             var response = await $http.get(
                 $scope.urlloadGiohang + "/" + user_id
             );
-            $scope.giohangs = response.data.data;
+            $scope.giohangs = response.data.data || []; // Nếu không có sản phẩm, gán mảng rỗng
 
-            // Tính tổng giá từ danh sách sản phẩm
-            $scope.total = $scope.giohangs.reduce(
-                (sum, item) => sum + item.gia * item.so_luong,
-                0
-            );
+            if ($scope.giohangs.length > 0) {
+                // Nếu có sản phẩm, tính tổng giá
+                $scope.total = $scope.giohangs.reduce(
+                    (sum, item) => sum + item.gia * item.so_luong,
+                    0
+                );
+            } else {
+                // Nếu giỏ hàng trống, đặt total = 0
+                $scope.total = 0;
+            }
 
-            console.log("Giỏ hàng:", $scope.giohangs); // Kiểm tra dữ liệu
+            console.log("Giỏ hàng:", $scope.giohangs);
             console.log("Tổng giá:", $scope.total);
 
             $scope.$apply(); // Cập nhật giao diện nếu cần
         } catch (error) {
             console.log("Lỗi khi tải giỏ hàng:", error);
+            $scope.giohangs = []; // Nếu lỗi, cũng gán giỏ hàng trống
+            $scope.total = 0;
+            $scope.$apply();
         }
     };
 
@@ -482,11 +493,19 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
             var response = await $http.get(
                 $scope.urlgetCountcart + "/" + user_id
             );
-            $scope.countCart = response.data.data;
+
+            if (response.data && response.data.data) {
+                $scope.countCart = response.data.data;
+            } else {
+                $scope.countCart = 0; // Nếu không có sản phẩm, hiển thị 0
+            }
+
             console.log("Số lượng giỏ hàng:", $scope.countCart);
             $scope.$apply(); // Cập nhật giao diện
         } catch (error) {
             console.error("Lỗi khi lấy số lượng giỏ hàng:", error);
+            $scope.countCart = 0; // Xử lý lỗi bằng cách đặt về 0
+            $scope.$apply();
         }
     };
 
@@ -501,6 +520,54 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
         }
     };
 
+    $scope.showSearch = function () {
+        Swal.fire({
+            title: "Tìm kiếm",
+            input: "text",
+            inputPlaceholder: "Nhập từ khóa tìm kiếm...",
+            showCancelButton: true,
+            confirmButtonText: "Tìm kiếm",
+            cancelButtonText: "Hủy",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var keyword = result.value;
+                console.log("Từ khóa tìm kiếm:", keyword);
+                window.location.href = "/search/" + keyword;
+            }
+        });
+    };
+
+    const loadSearch = async function () {
+        var keyword = document.getElementById("keyword").value;
+        console.log("Từ khóa tìm kiếm:", keyword);
+        try {
+            var response = await $http.get($scope.urlSearch + "/" + keyword);
+            $scope.searchs = response.data.data;
+            console.log("Kết quả tìm kiếm:", $scope.searchs);
+            $scope.$apply();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    $scope.showProductsByCategory = function (id) {
+        window.location.href = "/danh-muc/" + id;
+    };
+
+    const loadProductsByCategory = async function () {
+        var danhmuc_id = document.getElementById("danhmuc_id").value;
+        console.log("danhmuc_id:", danhmuc_id);
+        try {
+            var response = await $http.get($scope.urlloadDanhmucID + "/" + danhmuc_id);
+            $scope.danhmuc_ids = response.data.data;
+            console.log("Kết quả danhmuc_id:", $scope.danhmuc_ids);
+            $scope.$apply();
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Load dữ liệu khi trang web tải
     loadDanhmuc();
     loadSanpham();
     loadSize();
@@ -509,4 +576,6 @@ app.controller("CtrlTrangchu", function ($scope, $http) {
     getGiohang();
     countCart();
     loadSanphamRandom();
+    loadSearch();
+    loadProductsByCategory();
 });

@@ -356,8 +356,7 @@
                             </a>
                         </li> --}}
                         <li ng-repeat="danhmuc in danhmucs">
-                            <a class="dropdown-item" ng-value="danhmuc.id" href="#"
-                                onclick="showUnderConstruction()">
+                            <a class="dropdown-item" ng-value="danhmuc.id" href="#" ng-click="showProductsByCategory(danhmuc.id)">
                                 @{{ danhmuc.ten_danh_muc }}
                             </a>
                         </li>
@@ -368,7 +367,7 @@
                 </li>
             </ul>
             <div class="d-flex align-items-center ms-lg-4">
-                <a href="#" class="me-3" onclick="showSearch()">
+                <a href="#" class="me-3" ng-click="showSearch()">
                     <i class="fas fa-search"></i>
                 </a>
                 @if (Auth::check())
@@ -378,8 +377,6 @@
                         <span id="cartCount" class="cart-count">@{{ countCart }}</span>
                     </a>
                 @endif
-
-
                 <div id="cartModal" class="cart-modal">
                     <div class="cart-header">
                         <h5>Giỏ hàng</h5>
@@ -392,6 +389,9 @@
                         <span>Bạn đã được MIỄN PHÍ VẬN CHUYỂN</span>
                     </div> --}}
                     <div id="cartBody" class="cart-body">
+                        <div ng-if="giohangs.length === 0" class="empty-cart">
+                            <p>🛒 Giỏ hàng của bạn trống.</p>
+                        </div>
                         <!-- Cart items will be loaded here by JS -->
                         <div class="cart-item" ng-repeat="giohang in giohangs">
                             <img ng-src="@{{ giohang.sanpham.anhsp }}" alt="@{{ giohang.sanpham.tensp }}" class="cart-item-image">

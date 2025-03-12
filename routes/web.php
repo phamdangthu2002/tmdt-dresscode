@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\AdminController;
+use App\Http\Controllers\admin\CartController;
 use App\Http\Controllers\admin\danhmuc\DanhmucController;
 use App\Http\Controllers\admin\sanpham\SanphamController;
 use App\Http\Controllers\admin\size_color\MixController;
@@ -77,7 +78,12 @@ Route::prefix('admin')->middleware('auth')->group(function () {
         Route::post('/update/{id}', [MixController::class, 'updateColor'])->name('admin.color.update');
         Route::get('/delete/{id}', [MixController::class, 'deleteColor'])->name('admin.color.delete');
     });
+    Route::prefix('cart')->group(function () {
+        Route::get('/index/cart', [CartController::class, 'indexCart'])->name('admin.cart.index');
+    });
 });
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/detail/{id}', [HomeController::class, 'detail'])->name('detail');
+Route::get('/search/{keyword}', [HomeController::class, 'search'])->name('search');
+Route::get('/danh-muc/{id}', [HomeController::class, 'danhmuc'])->name('danhmuc');

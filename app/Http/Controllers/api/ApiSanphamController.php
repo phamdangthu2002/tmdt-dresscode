@@ -113,6 +113,14 @@ class ApiSanphamController extends Controller
 
         return response()->json(['data' => $sanpham], 200);
     }
+    public function loadSanphamDanhmucID($id)
+    {
+        $sanpham = Sanpham::with(['anhs', 'color'])
+            ->where('danh_muc_id', $id)
+            ->get();
+
+        return response()->json(['data' => $sanpham], 200);
+    }
 
     public function loadSanphamRandom()
     {
@@ -127,7 +135,30 @@ class ApiSanphamController extends Controller
         return response()->json(['data' => $sanpham], 200);
     }
 
+    public function loadSanphamSearch($keyword)
+    {
+        try {
+            if (empty($keyword)) {
+                return response()->json(['error' => 'Từ khóa tìm kiếm không được để trống'], 400);
+            }
 
+            $sanpham = Sanpham::with(['anhs', 'color'])
+                ->where(function ($query) use ($keyword) {
+                    $query->where('tensp', 'like', "%$keyword%")
+                        ->orWhere('mo_ta', 'like', "%$keyword%")
+                        ->orWhere('mota_chitiet', 'like', "%$keyword%");
+                })
+                ->get();
+
+            if ($sanpham->isEmpty()) {
+                return response()->json(['message' => 'Không tìm thấy sản phẩm'], 404);
+            }
+
+            return response()->json(['data' => $sanpham], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Lỗi hệ thống', 'message' => $e->getMessage()], 500);
+        }
+    }
 
     public function updateSanpham(Request $request, $id)
     {

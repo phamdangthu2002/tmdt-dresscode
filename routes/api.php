@@ -50,7 +50,8 @@ Route::get('/load/san-pham/{id}', [ApiSanphamController::class, 'loadSanphamID']
 Route::get('/load/san-pham-home', [ApiSanphamController::class, 'loadSanphamHome'])->name('loadSanphamHome');
 Route::get('/load/san-pham-danhmuc/{id}', [ApiSanphamController::class, 'loadSanphamDanhmuc'])->name('loadSanphamDanhmuc');
 Route::get('/load/san-pham-random', [ApiSanphamController::class, 'loadSanphamRandom'])->name('loadSanphamRandom');
-Route::get('/load/san-pham/search/{name}', [ApiSanphamController::class, 'loadSanphamSearch'])->name('loadSanphamSearch');
+Route::get('/load/san-pham/danh-muc/{id}', [ApiSanphamController::class, 'loadSanphamDanhmucID']);
+Route::get('/load/san-pham/search/{keyword}', [ApiSanphamController::class, 'loadSanphamSearch'])->name('loadSanphamSearch');
 Route::put('/update/san-pham/{id}', [ApiSanphamController::class, 'updateSanpham'])->name('updateSanpham');
 Route::delete('/delete/san-pham/{id}', [ApiSanphamController::class, 'deleteSanpham'])->name('deleteSanpham');
 

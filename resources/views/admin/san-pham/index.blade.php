@@ -88,7 +88,8 @@
                                 <div class="col-md-5">
                                     <div class="mb-3">
                                         <label for="color" class="form-label">Color</label>
-                                        <select class="form-select" id="color_id" name="color_id" ng-model="sanphams.color_id">
+                                        <select class="form-select" id="color_id" name="color_id"
+                                            ng-model="sanphams.color_id">
                                             <option value="">--Chọn màu sắc--</option>
                                             <option ng-repeat="color in loadColor" value="@{{ color.id }}">
                                                 @{{ color.name }}</option>
